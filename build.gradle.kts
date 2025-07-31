@@ -17,6 +17,7 @@ val ktormVersion = "4.1.1"
 val okhttpVersion = "4.12.0"
 val snakeyamlVersion = "2.3"
 val postgresqlVersion = "42.7.7"
+val guavaVersion = "33.4.8-jre"
 
 dependencies {
     testImplementation(kotlin("test"))
@@ -44,6 +45,7 @@ dependencies {
     implementation("org.slf4j:slf4j-jdk14:${slf4jVersion}")
     implementation("org.mockito:mockito-core:${mockitoVersion}")
     implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
+    implementation("com.google.guava:guava:${guavaVersion}")
 }
 
 tasks.test {

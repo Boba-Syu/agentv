@@ -18,6 +18,8 @@ val okhttpVersion = "4.12.0"
 val snakeyamlVersion = "2.3"
 val postgresqlVersion = "42.7.7"
 val guavaVersion = "33.4.8-jre"
+val langchain4jVersion = "1.2.0"
+val langchain4jMcpVersion = "1.2.0-beta8"
 
 dependencies {
     testImplementation(kotlin("test"))
@@ -36,6 +38,10 @@ dependencies {
     implementation("org.ktorm:ktorm-jackson:${ktormVersion}")
     implementation("org.ktorm:ktorm-support-postgresql:${ktormVersion}")
     implementation("org.postgresql:postgresql:${postgresqlVersion}")
+
+    implementation("dev.langchain4j:langchain4j:${langchain4jVersion}")
+    implementation("dev.langchain4j:langchain4j-ollama:${langchain4jVersion}")
+    implementation("dev.langchain4j:langchain4j-mcp:${langchain4jMcpVersion}")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")

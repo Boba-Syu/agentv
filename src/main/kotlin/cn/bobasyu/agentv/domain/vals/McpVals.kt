@@ -4,16 +4,22 @@ enum class McpTransportType {
     SSE, STDIO
 }
 
-data class McpConfigVal(
+sealed interface McpConfigVal
+
+data class StdioMcpConfigVal(
     val command: String,
     val args: List<String>
-)
+) : McpConfigVal
 
-class MCPBuilder {
+data class SseMcpConfigVal(
+    val url: String
+) : McpConfigVal
+
+class StdioMcpBuilder {
     lateinit var command: String
     lateinit var args: List<String>
 
-    fun build() = McpConfigVal(command, args)
+    fun build() = StdioMcpConfigVal(command, args)
 
     fun command(command: String) {
         this.command = command
@@ -24,7 +30,25 @@ class MCPBuilder {
     }
 }
 
-fun mcp(fn: MCPBuilder.() -> Unit): McpConfigVal = with(MCPBuilder()) {
-    fn()
-    build()
+class SseMcpBuilder {
+    lateinit var url: String
+
+    fun build() = SseMcpConfigVal(url)
+
+    fun url(url: String) {
+        this.url = url
+    }
+}
+
+object MCP {
+
+    fun stdio(fn: StdioMcpBuilder.() -> Unit): McpConfigVal = with(StdioMcpBuilder()) {
+        fn()
+        build()
+    }
+
+    fun sse(fn: SseMcpBuilder.() -> Unit): McpConfigVal = with(SseMcpBuilder()) {
+        fn()
+        build()
+    }
 }

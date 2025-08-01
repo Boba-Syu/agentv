@@ -3,7 +3,6 @@ package cn.bobasyu.agentv.domain.service.agent
 import cn.bobasyu.agentv.domain.aggregate.ChatAggregate
 import cn.bobasyu.agentv.domain.entity.AgentEntity
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.entity.EmbeddingModelEntity
 import cn.bobasyu.agentv.domain.entity.McpEntity
 import cn.bobasyu.agentv.domain.repository.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.AgentId
@@ -22,7 +21,6 @@ class AgentArmoryFactory {
         .build(object : CacheLoader<AgentId, AgentEntity>() {
             override fun load(agentId: AgentId) = AgentQueryRepository.INSTANCE.findAgentEntity(agentId)
         })
-
     val chatModelEntityHolder: LoadingCache<ChatModelId, ChatModelEntity> = CacheBuilder.newBuilder()
         .maximumSize(1000)
         .expireAfterWrite(1, TimeUnit.HOURS)

@@ -19,6 +19,6 @@ data class ChatModelEntity(
 ) : Entity<ChatModelId>(id) {
 
     fun chat(messages: List<MessageVal>, mcpList: List<McpConfigVal> = listOf()): AssistantMessageVal {
-        return ChatModelRepository.INSTANCE.chat(messages, mcpList)
+        return ChatModelRepository.INSTANCE.chat(this, messages, mcpList)
     }
 }

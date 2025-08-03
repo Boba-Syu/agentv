@@ -1,13 +1,8 @@
 package cn.bobasyu.agentv.common.repository
 
-import cn.bobasyu.agentv.config.ApplicationContext
 import cn.bobasyu.agentv.config.DatabaseConfig
 import org.ktorm.database.Database
-import org.ktorm.dsl.AssignmentsBuilder
-import org.ktorm.dsl.UpdateStatementBuilder
-import org.ktorm.dsl.from
-import org.ktorm.dsl.insert
-import org.ktorm.dsl.update
+import org.ktorm.dsl.*
 import org.ktorm.schema.BaseTable
 import org.ktorm.support.postgresql.InsertOrUpdateStatementBuilder
 import org.ktorm.support.postgresql.insertOrUpdate

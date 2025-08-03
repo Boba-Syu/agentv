@@ -1,10 +1,11 @@
 package cn.bobasyu.agentv.domain.service.agent
 
+import cn.bobasyu.agentv.common.utils.generateId
 import cn.bobasyu.agentv.domain.aggregate.ChatAggregate
 import cn.bobasyu.agentv.domain.entity.AgentEntity
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.entity.McpEntity
-import cn.bobasyu.agentv.domain.repository.AgentQueryRepository
+import cn.bobasyu.agentv.domain.repository.comand.AgentCommandRepository
 import cn.bobasyu.agentv.domain.vals.AgentId
 import cn.bobasyu.agentv.domain.vals.ChatModelId
 import cn.bobasyu.agentv.domain.vals.McpId
@@ -14,33 +15,46 @@ import com.google.common.cache.LoadingCache
 import java.util.concurrent.TimeUnit
 
 
-class AgentArmoryFactory {
-    val agentHolder: LoadingCache<AgentId, AgentEntity> = CacheBuilder.newBuilder()
+class AgentArmoryFactory(
+    private val agentCommandRepository: AgentCommandRepository
+) {
+    private val agentHolder: LoadingCache<AgentId, AgentEntity> = CacheBuilder.newBuilder()
         .maximumSize(1000)
         .expireAfterWrite(1, TimeUnit.HOURS)
         .build(object : CacheLoader<AgentId, AgentEntity>() {
-            override fun load(agentId: AgentId) = AgentQueryRepository.INSTANCE.findAgentEntity(agentId)
+            override fun load(agentId: AgentId) = agentCommandRepository.query().findAgentEntity(agentId)
         })
-    val chatModelEntityHolder: LoadingCache<ChatModelId, ChatModelEntity> = CacheBuilder.newBuilder()
+    private val chatModelEntityHolder: LoadingCache<ChatModelId, ChatModelEntity> = CacheBuilder.newBuilder()
         .maximumSize(1000)
         .expireAfterWrite(1, TimeUnit.HOURS)
         .build(object : CacheLoader<ChatModelId, ChatModelEntity>() {
-            override fun load(chatModelId: ChatModelId) = AgentQueryRepository.INSTANCE.findChatModelEntity(chatModelId)
+            override fun load(chatModelId: ChatModelId) = agentCommandRepository.query().findChatModelEntity(chatModelId)
         })
-    val mcpEntityHolder: LoadingCache<McpId, McpEntity> = CacheBuilder.newBuilder()
+    private val mcpEntityHolder: LoadingCache<McpId, McpEntity> = CacheBuilder.newBuilder()
         .maximumSize(1000)
         .expireAfterWrite(1, TimeUnit.HOURS)
         .build(object : CacheLoader<McpId, McpEntity>() {
-            override fun load(mcpId: McpId) = AgentQueryRepository.INSTANCE.findMcpEntity(mcpId)
+            override fun load(mcpId: McpId) = agentCommandRepository.query().findMcpEntity(mcpId)
         })
 
-    fun agentEntity(agentId: AgentId): AgentEntity = agentHolder.get(agentId)
+    fun agentEntity(agentId: AgentId): AgentEntity = agentHolder[agentId]
 
-    fun chatModelEntity(chatModelId: ChatModelId): ChatModelEntity = chatModelEntityHolder.get(chatModelId)
+    fun chatModelEntity(chatModelId: ChatModelId): ChatModelEntity = chatModelEntityHolder[chatModelId]
 
-    fun mcpEntity(mcpId: McpId): McpEntity = mcpEntityHolder.get(mcpId)
+    fun mcpEntity(mcpId: McpId): McpEntity = mcpEntityHolder[mcpId]
 
     fun agentAggregate(agentId: AgentId): ChatAggregate {
+        val agentEntity = agentEntity(agentId)
+        val chatModelEntity = chatModelEntity(agentEntity.chatModelId)
+        return ChatAggregate(
+            agent = agentEntity,
+            chatModel = chatModelEntity,
+            messages = mutableListOf()
+        )
+    }
+
+    fun agentAggregate(chatModelEntity: ChatModelEntity): ChatAggregate {
+        val agentId = AgentId(generateId())
         val agentEntity = agentEntity(agentId)
         val chatModelEntity = chatModelEntity(agentEntity.chatModelId)
         return ChatAggregate(

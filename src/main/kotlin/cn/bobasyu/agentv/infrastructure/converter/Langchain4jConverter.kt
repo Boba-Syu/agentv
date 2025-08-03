@@ -41,10 +41,14 @@ fun mcpTransport(mcpConfigVal: McpConfigVal): McpTransport = when (mcpConfigVal)
     is SseMcpConfigVal -> sseMcpTransport(mcpConfigVal)
 }
 
-fun stdioMcpTransport(mcpConfigVal: StdioMcpConfigVal): StdioMcpTransport = StdioMcpTransport.Builder()
-    .command(listOf("/usr/bin/npm", "exec", "@modelcontextprotocol/server-everything@0.6.2"))
-    .logEvents(true)
-    .build()
+fun stdioMcpTransport(mcpConfigVal: StdioMcpConfigVal): StdioMcpTransport {
+    val command = mutableListOf(mcpConfigVal.command)
+    mcpConfigVal.args.forEach { command.add(it) }
+    return StdioMcpTransport.Builder()
+        .command(command)
+        .logEvents(true)
+        .build()
+}
 
 fun sseMcpTransport(mcpConfigVal: SseMcpConfigVal): HttpMcpTransport = HttpMcpTransport.Builder()
     .sseUrl(mcpConfigVal.url)

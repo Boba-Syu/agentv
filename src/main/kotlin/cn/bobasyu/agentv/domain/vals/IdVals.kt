@@ -2,10 +2,10 @@ package cn.bobasyu.agentv.domain.vals
 
 import cn.bobasyu.agentv.common.vals.Id
 
-class ChatModelId(override val id: Long) : Id(id)
+class ChatModelId(override val value: Long) : Id(value)
 
-data class EmbeddingModelId(override val id: Long) : Id(id)
+data class EmbeddingModelId(override val value: Long) : Id(value)
 
-data class AgentId(override val id: Long) : Id(id)
+data class AgentId(override val value: Long) : Id(value)
 
-data class McpId(override val id: Long) : Id(id)
+data class McpId(override val value: Long) : Id(value)

@@ -4,6 +4,12 @@ enum class McpTransportType {
     SSE, STDIO
 }
 
+fun mcpTransportType(str: String) = when (str.lowercase()) {
+    "sse" -> McpTransportType.SSE
+    "stdio" -> McpTransportType.STDIO
+    else -> throw IllegalArgumentException("Invalid McpTransportType: $str")
+}
+
 sealed interface McpConfigVal
 
 data class StdioMcpConfigVal(

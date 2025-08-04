@@ -10,6 +10,11 @@ enum class FilterMatchType {
     EQUAL,
 }
 
+fun filterMatchType(str: String): FilterMatchType = when (str.lowercase()) {
+    "equal" -> FilterMatchType.EQUAL
+    else -> throw IllegalArgumentException("Invalid filter match type: $str")
+}
+
 data class EmbeddingFilterCondition(
     val key: String,
     val value: Any,

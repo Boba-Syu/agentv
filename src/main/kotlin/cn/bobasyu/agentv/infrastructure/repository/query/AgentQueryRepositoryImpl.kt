@@ -95,6 +95,7 @@ class AgentQueryRepositoryImpl(
 
     }
 
+
     override fun findMessages(agentId: AgentId): List<MessageVal> {
         return databaseHandler.from(ChatMessageRecords)
             .select()

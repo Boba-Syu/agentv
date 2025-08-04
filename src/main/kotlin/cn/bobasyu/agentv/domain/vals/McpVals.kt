@@ -4,6 +4,15 @@ enum class McpTransportType {
     SSE, STDIO
 }
 
+fun mcpTransportType(str: String): McpTransportType {
+    for (value in McpTransportType.entries) {
+        if (value.name == str.uppercase()) {
+            return value
+        }
+    }
+    throw IllegalArgumentException("Invalid McpTransportType: $str")
+}
+
 sealed interface McpConfigVal
 
 data class StdioMcpConfigVal(

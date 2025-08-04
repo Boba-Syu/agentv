@@ -14,10 +14,9 @@ class PersistentChatMemoryStore(
         return agentRepository.query().findMessages(AgentId(agentId))
             .map {
                 when (it.role) {
-                    "user" -> langChain4jMessage(UserMessageVal(it.message))
-                    "assistant" -> langChain4jMessage(AssistantMessageVal(it.message))
-                    "system" -> langChain4jMessage(SystemMessageVal(it.message))
-                    else -> throw IllegalArgumentException("Invalid role: ${it.role}")
+                    MessageRole.USER -> langChain4jMessage(it)
+                    MessageRole.ASSISTANT -> langChain4jMessage(it)
+                    MessageRole.SYSTEM -> langChain4jMessage(it)
                 }
             }
     }
@@ -37,7 +36,7 @@ class PersistentChatMemoryStore(
                 else -> throw IllegalArgumentException("Invalid role: ${chatMessage.type()}")
             }
         }
-        agentRepository.updateMessages(AgentId(memoryId as Long), messageVals)
+        agentRepository.saveMessages(AgentId(memoryId as Long), messageVals)
     }
 
     override fun deleteMessages(memoryId: Any) {

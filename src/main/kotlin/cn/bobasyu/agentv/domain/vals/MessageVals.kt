@@ -5,6 +5,15 @@ enum class MessageRole {
     SYSTEM, USER, ASSISTANT
 }
 
+fun messageRole(role: String): MessageRole {
+    for (value in MessageRole.entries) {
+        if (value.name == role.uppercase()) {
+            return value
+        }
+    }
+    throw IllegalArgumentException("Invalid message role: $role")
+}
+
 sealed class MessageVal(
     val role: MessageRole,
     val content: String

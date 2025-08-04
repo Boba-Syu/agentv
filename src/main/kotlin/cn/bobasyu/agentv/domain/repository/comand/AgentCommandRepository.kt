@@ -13,7 +13,7 @@ interface AgentCommandRepository : BaseCommandRepository<AgentQueryRepository> {
         mcpList: List<McpConfigVal>
     ): AssistantMessageVal
 
-    fun updateMessages(
+    fun saveMessages(
         agentId: AgentId,
         messages: List<MessageVal>
     )

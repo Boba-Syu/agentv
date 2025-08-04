@@ -8,3 +8,12 @@ data class ChatModelConfigVal(
 enum class ChatModelSourceType {
     OLLAMA, OPENAI, VOLCENGINE
 }
+
+fun chatModelSourceType(str: String): ChatModelSourceType {
+    for (value in ChatModelSourceType.entries) {
+        if (value.name == str.uppercase()) {
+            return value
+        }
+    }
+    throw IllegalArgumentException("Invalid ChatModelSourceType: $str")
+}

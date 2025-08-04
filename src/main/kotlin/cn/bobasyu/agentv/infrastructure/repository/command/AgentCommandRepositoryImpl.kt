@@ -59,16 +59,18 @@ class AgentCommandRepositoryImpl(
         return AssistantMessageVal(response)
     }
 
-    override fun updateMessages(
+    override fun saveMessages(
         agentId: AgentId,
         messages: List<MessageVal>
     ) {
-        messages.forEach { chatMessage ->
-            databaseHandler.insertOrUpdate(ChatMessageRecords) {
-                set(it.id, generateId())
-                set(ChatMessageRecords.agentId, agentId.value)
-                set(ChatMessageRecords.message, chatMessage.content)
-                set(ChatMessageRecords.role, chatMessage.role.name.lowercase())
+        databaseHandler.batchInsert(ChatMessageRecords) {
+            messages.map { chatMessage ->
+                item {
+                    set(it.id, generateId())
+                    set(ChatMessageRecords.agentId, agentId.value)
+                    set(ChatMessageRecords.message, chatMessage.content)
+                    set(ChatMessageRecords.role, chatMessage.role.name.lowercase())
+                }
             }
         }
     }
@@ -82,10 +84,12 @@ class AgentCommandRepositoryImpl(
             }.orderBy(ChatMessageRecords.createAt.asc())
             .map { row -> ChatMessageRecords.createEntity(row) }
 
-        messageRecords.forEach { messageRecord ->
-            databaseHandler.insertOrUpdate(ChatMessageRecords) {
-                set(it.id, messageRecord.id)
-                set(ChatMessageRecords.deleteFlag, false)
+        databaseHandler.batchUpdate(ChatMessageRecords) {
+            messageRecords.map { messageRecord ->
+                item {
+                    set(it.id, messageRecord.id)
+                    set(ChatMessageRecords.deleteFlag, false)
+                }
             }
         }
     }

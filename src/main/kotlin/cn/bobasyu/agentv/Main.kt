@@ -3,7 +3,7 @@ package cn.bobasyu.agentv
 import cn.bobasyu.agentv.common.http.failure
 import cn.bobasyu.agentv.common.http.unauthorized
 import cn.bobasyu.agentv.common.utils.toJson
-import cn.bobasyu.agentv.config.ApplicationContext
+import cn.bobasyu.agentv.application.ApplicationContext
 import cn.bobasyu.agentv.config.ServerConfig
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServer
@@ -66,10 +66,10 @@ fun main() {
         // todo
     )
     val vertx = Vertx.vertx()
-    val applicationContext = ApplicationContext(vertx)
+    ApplicationContext.instance = ApplicationContext(vertx)
     val mainVerticle = MainVerticle(
         deployServiceVerticleHandlerList = deployServiceVerticleHandlerList,
-        applicationContext = applicationContext
+        applicationContext = ApplicationContext.instance
     )
 
     vertx.apply {

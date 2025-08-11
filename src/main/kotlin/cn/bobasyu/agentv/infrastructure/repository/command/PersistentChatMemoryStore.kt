@@ -12,13 +12,7 @@ class PersistentChatMemoryStore(
     override fun getMessages(memoryId: Any): List<ChatMessage> {
         val agentId = memoryId as Long
         return agentRepository.query().findMessages(AgentId(agentId))
-            .map {
-                when (it.role) {
-                    MessageRole.USER -> langChain4jMessage(it)
-                    MessageRole.ASSISTANT -> langChain4jMessage(it)
-                    MessageRole.SYSTEM -> langChain4jMessage(it)
-                }
-            }
+            .map { langChain4jMessage(it) }
     }
 
     override fun updateMessages(memoryId: Any, chetMessages: List<ChatMessage>) {

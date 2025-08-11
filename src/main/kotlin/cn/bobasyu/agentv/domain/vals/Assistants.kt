@@ -1,5 +1,5 @@
 package cn.bobasyu.agentv.domain.vals
 
-interface Bot {
+interface AgentAssistant {
     fun chat(message: String): String
 }

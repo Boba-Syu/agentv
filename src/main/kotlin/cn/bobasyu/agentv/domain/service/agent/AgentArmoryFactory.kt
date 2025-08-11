@@ -1,7 +1,7 @@
 package cn.bobasyu.agentv.domain.service.agent
 
 import cn.bobasyu.agentv.common.utils.generateId
-import cn.bobasyu.agentv.domain.aggregate.ChatAggregate
+import cn.bobasyu.agentv.domain.aggregate.AgentAggregate
 import cn.bobasyu.agentv.domain.entity.AgentEntity
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.entity.McpEntity
@@ -63,31 +63,29 @@ class AgentArmoryFactory(
 
     fun mcpEntity(mcpId: McpId): McpEntity = mcpEntityHolder[mcpId]
 
-    fun chatAggregate(agentId: AgentId): ChatAggregate {
+    fun chatAggregate(agentId: AgentId): AgentAggregate {
         val agentEntity = agentEntity(agentId)
-        val chatModelEntity = chatModelEntity(agentEntity.chatModelId)
-        return ChatAggregate(
+        return AgentAggregate(
             agent = agentEntity,
-            chatModel = chatModelEntity,
             messages = mutableListOf()
         )
     }
 
-    fun chatAggregate(chatModelEntity: ChatModelEntity): ChatAggregate {
+    fun chatAggregate(chatModelEntity: ChatModelEntity): AgentAggregate {
         val agentId = AgentId(generateId())
-        val agentEntity = agentEntity(agentId)
-        val chatModelEntity = chatModelEntity(agentEntity.chatModelId)
-        return ChatAggregate(
+        val agentEntity = AgentEntity(id = agentId, chatModelId = chatModelEntity.id)
+        val agentAggregate = AgentAggregate(
             agent = agentEntity,
-            chatModel = chatModelEntity,
             messages = agentQueryRepository.findMessages(agentId).toMutableList()
         )
+        agentHolder.put(agentId, agentEntity)
+        return agentAggregate
     }
 
-    fun chatAggregate(chatModelEntity: ChatModelEntity, agentEntity: AgentEntity): ChatAggregate {
-        return ChatAggregate(
+    fun chatAggregate(agentEntity: AgentEntity): AgentAggregate {
+        return AgentAggregate(
             agent = agentEntity,
-            chatModel = chatModelEntity
+            messages = agentQueryRepository.findMessages(agentEntity.id).toMutableList()
         )
     }
 }

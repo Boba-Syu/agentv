@@ -1,9 +1,10 @@
-package cn.bobasyu.agentv.config
+package cn.bobasyu.agentv.application
 
 import cn.bobasyu.agentv.common.http.HttpClient
 import cn.bobasyu.agentv.common.utils.ApplicationConfig
 import cn.bobasyu.agentv.common.auth.JwtAuth
 import cn.bobasyu.agentv.common.repository.DatabaseHandler
+import cn.bobasyu.agentv.config.DatabaseConfig
 import io.vertx.core.Vertx
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
@@ -14,7 +15,11 @@ import java.io.Closeable
 class ApplicationContext(
     private val vertx: Vertx,
     private val configPath: String = "application.yaml",
-): Closeable {
+) : Closeable {
+
+    companion object {
+        lateinit var instance: ApplicationContext
+    }
 
     /**
      * 全局配置值

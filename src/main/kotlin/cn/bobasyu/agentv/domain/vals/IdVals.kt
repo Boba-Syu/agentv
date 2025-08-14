@@ -11,3 +11,5 @@ data class AgentId(override val value: Long) : Id(value)
 data class McpId(override val value: Long) : Id(value)
 
 data class ToolId(override val value: Long) : Id(value)
+
+data class WorkflowId(override val value: Long) : Id(value)

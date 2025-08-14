@@ -2,6 +2,7 @@ package cn.bobasyu.agentv.domain.repository.comand
 
 import cn.bobasyu.agentv.common.repository.BaseCommandRepository
 import cn.bobasyu.agentv.domain.aggregate.AgentAggregate
+import cn.bobasyu.agentv.domain.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.*
 
@@ -10,11 +11,9 @@ interface AgentCommandRepository : BaseCommandRepository<AgentQueryRepository> {
     /**
      * 聊天
      */
-    fun chat(
-        agentAggregate: AgentAggregate,
-        message: UserMessageVal,
-        mcpList: List<McpConfigVal>
-    ): AssistantMessageVal
+    fun chat(agentAggregate: AgentAggregate, message: UserMessageVal): AssistantMessageVal
+
+    fun chat(chatModel: ChatModelEntity, message: UserMessageVal): AssistantMessageVal
 
     /**
      * 保存消息

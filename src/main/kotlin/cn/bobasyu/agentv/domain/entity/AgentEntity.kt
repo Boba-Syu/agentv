@@ -1,5 +1,6 @@
 package cn.bobasyu.agentv.domain.entity
 
+import cn.bobasyu.agentv.application.repository.Query.agentQueryRepository
 import cn.bobasyu.agentv.common.vals.Aggregate
 import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.AgentId
@@ -29,15 +30,15 @@ data class AgentEntity(
     /**
      * 获取MCP列表
      */
-    fun mcpList(agentQueryRepository: AgentQueryRepository) = agentQueryRepository.listMcpEntities(mcpIdList)
+    val mcpList: List<McpEntity> get() = agentQueryRepository.listMcpEntities(mcpIdList)
 
     /**
      * 获取智能体模型
      */
-    fun chatModel(agentQueryRepository: AgentQueryRepository) = agentQueryRepository.findChatModelEntity(chatModelId)
+    val chatModel: ChatModelEntity get() = agentQueryRepository.findChatModelEntity(chatModelId)
 
     /**
      * 获取工具列表
      */
-    fun tools(agentQueryRepository: AgentQueryRepository) = agentQueryRepository.listToolEntities(toolIdList)
+    val tools: List<ToolEntity> get() = agentQueryRepository.listToolEntities(toolIdList)
 }

@@ -1,10 +1,13 @@
 package cn.bobasyu.agentv.infrastructure.repository.command
 
+import cn.bobasyu.agentv.application.repository.Command
 import cn.bobasyu.agentv.domain.repository.comand.AgentCommandRepository
 import cn.bobasyu.agentv.domain.vals.*
 import cn.bobasyu.agentv.infrastructure.converter.langChain4jMessage
 import dev.langchain4j.data.message.*
 import dev.langchain4j.store.memory.chat.ChatMemoryStore
+
+val persistentChatMemoryStore by lazy { PersistentChatMemoryStore(Command.agentCommandRepository) }
 
 class PersistentChatMemoryStore(
     private val agentRepository: AgentCommandRepository

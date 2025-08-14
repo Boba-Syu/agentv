@@ -1,15 +1,13 @@
 package cn.bobasyu.agentv.domain.aggregate
 
+import cn.bobasyu.agentv.application.repository.Command.agentCommandRepository
 import cn.bobasyu.agentv.common.vals.Aggregate
 import cn.bobasyu.agentv.domain.entity.AgentEntity
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.entity.McpEntity
 import cn.bobasyu.agentv.domain.entity.ToolEntity
-import cn.bobasyu.agentv.domain.repository.comand.AgentCommandRepository
-import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.AgentId
 import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
-import cn.bobasyu.agentv.domain.vals.McpConfigVal
 import cn.bobasyu.agentv.domain.vals.MessageVal
 import cn.bobasyu.agentv.domain.vals.UserMessageVal
 
@@ -30,26 +28,23 @@ data class AgentAggregate(
     /**
      * 获取智能体模型
      */
-    fun chatModel(agentQueryRepository: AgentQueryRepository): ChatModelEntity = agent.chatModel(agentQueryRepository)
+    val chatModel: ChatModelEntity get() = agent.chatModel
 
     /**
      * 获取MCP列表
      */
-    fun mcpList(agentQueryRepository: AgentQueryRepository): List<McpEntity> = agent.mcpList(agentQueryRepository)
+    val mcpList: List<McpEntity> get() = agent.mcpList
 
     /**
      * 获取工具列表
      */
-    fun tools(agentQueryRepository: AgentQueryRepository): List<ToolEntity> = agent.tools(agentQueryRepository)
+    val tools: List<ToolEntity> get() = agent.tools
 
     /**
      * 聊天
      */
-    fun chat(userMessage: UserMessageVal, agentCommandRepository: AgentCommandRepository): AssistantMessageVal {
-        val mcpConfigVals: List<McpConfigVal> = agentCommandRepository.query().listMcpEntities(agent.mcpIdList)
-            .map { it.config }
-            .toList()
-        val assistantMessage = agentCommandRepository.chat(this, userMessage, mcpConfigVals)
+    fun chat(userMessage: UserMessageVal): AssistantMessageVal {
+        val assistantMessage = agentCommandRepository.chat(this, userMessage)
         messages.add(assistantMessage)
         return assistantMessage
     }

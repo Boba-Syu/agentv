@@ -3,6 +3,7 @@ package cn.bobasyu.agentv.infrastructure.repository.command
 import cn.bobasyu.agentv.common.repository.DatabaseHandler
 import cn.bobasyu.agentv.common.utils.generateId
 import cn.bobasyu.agentv.domain.aggregate.AgentAggregate
+import cn.bobasyu.agentv.domain.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.repository.comand.AgentCommandRepository
 import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.AgentId
@@ -39,12 +40,18 @@ class AgentCommandRepositoryImpl(
 ) : AgentCommandRepository {
 
     override fun chat(
-        agentAggregate: AgentAggregate,
-        message: UserMessageVal,
-        mcpList: List<McpConfigVal>
+        agentAggregate: AgentAggregate, message: UserMessageVal
     ): AssistantMessageVal {
-        return when (agentAggregate.chatModel(query()).sourceType) {
-            ChatModelSourceType.OLLAMA -> ollamaChat(agentAggregate, message, mcpList)
+        return when (agentAggregate.chatModel.sourceType) {
+            ChatModelSourceType.OLLAMA -> ollamaChat(agentAggregate, message)
+            ChatModelSourceType.OPENAI -> TODO()
+            ChatModelSourceType.VOLCENGINE -> TODO()
+        }
+    }
+
+    override fun chat(chatModel: ChatModelEntity, message: UserMessageVal): AssistantMessageVal {
+        return when (chatModel.sourceType) {
+            ChatModelSourceType.OLLAMA -> TODO()
             ChatModelSourceType.OPENAI -> TODO()
             ChatModelSourceType.VOLCENGINE -> TODO()
         }
@@ -52,24 +59,23 @@ class AgentCommandRepositoryImpl(
 
     private fun ollamaChat(
         agentAggregate: AgentAggregate,
-        message: UserMessageVal,
-        mcpList: List<McpConfigVal>
+        message: UserMessageVal
     ): AssistantMessageVal {
         // 模型
-        val chatModelEntity = agentAggregate.chatModel(query())
+        val chatModelEntity = agentAggregate.chatModel
         val ollamaChatModel = ollamaChatModel(chatModelEntity)
         // 记忆
         val chatMemory = MessageWindowChatMemory.builder()
             .id(chatModelEntity.id)
             .maxMessages(chatModelEntity.config?.maxMessage ?: 10)
-            .chatMemoryStore(PersistentChatMemoryStore(this))
+            .chatMemoryStore(persistentChatMemoryStore)
             .build()
         // mcp
         val mcpToolProvider = McpToolProvider.builder()
-            .mcpClients(mcpClients(mcpList))
+            .mcpClients(mcpClients(agentAggregate.mcpList.map { it.config }))
             .build()
         // tools 配置
-        val toolSpecificationMap: Map<ToolSpecification, ToolExecutor> = agentAggregate.tools(query())
+        val toolSpecificationMap: Map<ToolSpecification, ToolExecutor> = agentAggregate.tools
             .associate { toolSpecification(it) to toolExecutor(it.functionCallExecutor) }
 
         val agentAssistant = AiServices.builder(AgentAssistant::class.java)

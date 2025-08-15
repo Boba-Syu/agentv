@@ -3,7 +3,7 @@ package cn.bobasyu.agentv.domain.repository.query
 import cn.bobasyu.agentv.common.repository.BaseQueryRepository
 import cn.bobasyu.agentv.domain.entity.AgentEntity
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.entity.RagEntity
+import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.entity.McpEntity
 import cn.bobasyu.agentv.domain.entity.ToolEntity
 import cn.bobasyu.agentv.domain.vals.*
@@ -33,7 +33,7 @@ interface AgentQueryRepository : BaseQueryRepository {
     /**
      * 查询EmbeddingModel
      */
-    fun findEmbeddingModelEntity(ragId: RagId): RagEntity
+    fun findEmbeddingModelEntity(ragId: RagId): EmbeddingEntity
 
     /**
      * 查询消息

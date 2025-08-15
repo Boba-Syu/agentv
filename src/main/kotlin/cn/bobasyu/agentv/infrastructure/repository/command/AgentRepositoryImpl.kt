@@ -4,28 +4,17 @@ import cn.bobasyu.agentv.common.repository.DatabaseHandler
 import cn.bobasyu.agentv.common.utils.generateId
 import cn.bobasyu.agentv.domain.aggregate.AgentAggregate
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.repository.comand.AgentCommandRepository
+import cn.bobasyu.agentv.domain.repository.comand.AgentRepository
 import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.AgentId
 import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
-import cn.bobasyu.agentv.domain.vals.AgentAssistant
 import cn.bobasyu.agentv.domain.vals.ChatModelId
-import cn.bobasyu.agentv.domain.vals.ChatModelSourceType
-import cn.bobasyu.agentv.domain.vals.McpConfigVal
 import cn.bobasyu.agentv.domain.vals.McpId
 import cn.bobasyu.agentv.domain.vals.MessageVal
 import cn.bobasyu.agentv.domain.vals.UserMessageVal
-import cn.bobasyu.agentv.infrastructure.converter.mcpClients
-import cn.bobasyu.agentv.infrastructure.converter.ollamaChatModel
-import cn.bobasyu.agentv.infrastructure.converter.toolExecutor
-import cn.bobasyu.agentv.infrastructure.converter.toolSpecification
 import cn.bobasyu.agentv.infrastructure.record.AgentRecords
 import cn.bobasyu.agentv.infrastructure.record.ChatMessageRecords
-import dev.langchain4j.agent.tool.ToolSpecification
-import dev.langchain4j.mcp.McpToolProvider
-import dev.langchain4j.memory.chat.MessageWindowChatMemory
-import dev.langchain4j.service.AiServices
-import dev.langchain4j.service.tool.ToolExecutor
+import cn.bobasyu.agentv.infrastructure.repository.command.chat.ChatAdapterHolder
 import org.ktorm.dsl.asc
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.map
@@ -34,58 +23,21 @@ import org.ktorm.dsl.select
 import org.ktorm.dsl.where
 
 
-class AgentCommandRepositoryImpl(
+class AgentRepositoryImpl(
     private val agentQueryRepository: AgentQueryRepository,
     private val databaseHandler: DatabaseHandler,
-) : AgentCommandRepository {
+) : AgentRepository {
 
     override fun chat(
         agentAggregate: AgentAggregate, message: UserMessageVal
     ): AssistantMessageVal {
-        return when (agentAggregate.chatModel.sourceType) {
-            ChatModelSourceType.OLLAMA -> ollamaChat(agentAggregate, message)
-            ChatModelSourceType.OPENAI -> TODO()
-            ChatModelSourceType.VOLCENGINE -> TODO()
-        }
+        val chatAdapter = ChatAdapterHolder.chatAdapter(agentAggregate.chatModel.sourceType)
+        return chatAdapter.chat(agentAggregate, message)
     }
 
     override fun chat(chatModel: ChatModelEntity, message: UserMessageVal): AssistantMessageVal {
-        return when (chatModel.sourceType) {
-            ChatModelSourceType.OLLAMA -> TODO()
-            ChatModelSourceType.OPENAI -> TODO()
-            ChatModelSourceType.VOLCENGINE -> TODO()
-        }
-    }
-
-    private fun ollamaChat(
-        agentAggregate: AgentAggregate,
-        message: UserMessageVal
-    ): AssistantMessageVal {
-        // 模型
-        val chatModelEntity = agentAggregate.chatModel
-        val ollamaChatModel = ollamaChatModel(chatModelEntity)
-        // 记忆
-        val chatMemory = MessageWindowChatMemory.builder()
-            .id(chatModelEntity.id)
-            .maxMessages(chatModelEntity.config?.maxMessage ?: 10)
-            .chatMemoryStore(persistentChatMemoryStore)
-            .build()
-        // mcp
-        val mcpToolProvider = McpToolProvider.builder()
-            .mcpClients(mcpClients(agentAggregate.mcpList.map { it.config }))
-            .build()
-        // tools 配置
-        val toolSpecificationMap: Map<ToolSpecification, ToolExecutor> = agentAggregate.tools
-            .associate { toolSpecification(it) to toolExecutor(it.functionCallExecutor) }
-
-        val agentAssistant = AiServices.builder(AgentAssistant::class.java)
-            .chatMemory(chatMemory)
-            .chatModel(ollamaChatModel)
-            .toolProvider(mcpToolProvider)
-            .tools(toolSpecificationMap)
-            .build()
-        val response = agentAssistant.chat(message.content)
-        return AssistantMessageVal(response)
+        val chatAdapter = ChatAdapterHolder.chatAdapter(chatModel.sourceType)
+        return chatAdapter.chat(chatModel, message)
     }
 
     override fun saveMessages(

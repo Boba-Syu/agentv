@@ -6,13 +6,16 @@ import cn.bobasyu.agentv.domain.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.*
 
-interface AgentCommandRepository : BaseCommandRepository<AgentQueryRepository> {
+interface AgentRepository : BaseCommandRepository<AgentQueryRepository> {
 
     /**
-     * 聊天
+     * 聊天，带有智能体配置的记忆，工具，mcp等
      */
     fun chat(agentAggregate: AgentAggregate, message: UserMessageVal): AssistantMessageVal
 
+    /**
+     * 聊天, 单纯的模型调用
+     */
     fun chat(chatModel: ChatModelEntity, message: UserMessageVal): AssistantMessageVal
 
     /**

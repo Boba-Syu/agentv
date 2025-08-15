@@ -1,16 +1,22 @@
-package cn.bobasyu.agentv.infrastructure.repository.command
+package cn.bobasyu.agentv.infrastructure.repository.command.message
 
-import cn.bobasyu.agentv.application.repository.Command
-import cn.bobasyu.agentv.domain.repository.comand.AgentCommandRepository
-import cn.bobasyu.agentv.domain.vals.*
+import cn.bobasyu.agentv.domain.repository.comand.AgentRepository
+import cn.bobasyu.agentv.domain.vals.AgentId
+import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
+import cn.bobasyu.agentv.domain.vals.MessageVal
+import cn.bobasyu.agentv.domain.vals.SystemMessageVal
+import cn.bobasyu.agentv.domain.vals.UserMessageVal
 import cn.bobasyu.agentv.infrastructure.converter.langChain4jMessage
-import dev.langchain4j.data.message.*
+import dev.langchain4j.data.message.AiMessage
+import dev.langchain4j.data.message.ChatMessage
+import dev.langchain4j.data.message.ChatMessageType
+import dev.langchain4j.data.message.SystemMessage
+import dev.langchain4j.data.message.TextContent
+import dev.langchain4j.data.message.UserMessage
 import dev.langchain4j.store.memory.chat.ChatMemoryStore
 
-val persistentChatMemoryStore by lazy { PersistentChatMemoryStore(Command.agentCommandRepository) }
-
 class PersistentChatMemoryStore(
-    private val agentRepository: AgentCommandRepository
+    private val agentRepository: AgentRepository
 ) : ChatMemoryStore {
     override fun getMessages(memoryId: Any): List<ChatMessage> {
         val agentId = memoryId as Long

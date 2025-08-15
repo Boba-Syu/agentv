@@ -3,7 +3,7 @@ package cn.bobasyu.agentv.domain.entity
 import cn.bobasyu.agentv.common.vals.Entity
 import cn.bobasyu.agentv.domain.vals.ChatModelConfigVal
 import cn.bobasyu.agentv.domain.vals.ChatModelId
-import cn.bobasyu.agentv.domain.vals.ChatModelSourceType
+import cn.bobasyu.agentv.domain.vals.ModelSourceType
 import cn.bobasyu.agentv.domain.vals.SystemMessageVal
 
 /**
@@ -29,5 +29,5 @@ data class ChatModelEntity(
     /**
      * 模型来源
      */
-    var sourceType: ChatModelSourceType
+    var sourceType: ModelSourceType
 ) : Entity<ChatModelId>(id)

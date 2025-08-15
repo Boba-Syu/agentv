@@ -20,6 +20,8 @@ val postgresqlVersion = "42.7.7"
 val guavaVersion = "33.4.8-jre"
 val langchain4jVersion = "1.2.0"
 val langchain4jMcpVersion = "1.2.0-beta8"
+val langchain4jPgVectorVersion = "0.36.2"
+val pgVersion = "42.7.3"
 
 dependencies {
     testImplementation(kotlin("test"))
@@ -42,6 +44,8 @@ dependencies {
     implementation("dev.langchain4j:langchain4j:${langchain4jVersion}")
     implementation("dev.langchain4j:langchain4j-ollama:${langchain4jVersion}")
     implementation("dev.langchain4j:langchain4j-mcp:${langchain4jMcpVersion}")
+    implementation("dev.langchain4j:langchain4j-pgvector:${langchain4jPgVectorVersion}")
+    implementation("org.postgresql:postgresql:${pgVersion}")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")

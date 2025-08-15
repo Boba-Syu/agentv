@@ -9,7 +9,7 @@ import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.AgentId
 import cn.bobasyu.agentv.domain.vals.ChatModelConfigVal
 import cn.bobasyu.agentv.domain.vals.ChatModelId
-import cn.bobasyu.agentv.domain.vals.ChatModelSourceType
+import cn.bobasyu.agentv.domain.vals.ModelSourceType
 import cn.bobasyu.agentv.domain.vals.McpId
 import cn.bobasyu.agentv.domain.vals.SystemMessageVal
 import com.google.common.cache.CacheBuilder
@@ -46,7 +46,7 @@ class AgentArmoryFactory(
 
     fun chatModelEntity(
         modelName: String,
-        sourceType: ChatModelSourceType,
+        sourceType: ModelSourceType,
         role: SystemMessageVal? = null,
         config: ChatModelConfigVal? = null
     ): ChatModelEntity {

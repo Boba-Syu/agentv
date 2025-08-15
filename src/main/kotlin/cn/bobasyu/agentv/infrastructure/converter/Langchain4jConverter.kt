@@ -2,12 +2,12 @@ package cn.bobasyu.agentv.infrastructure.converter
 
 import cn.bobasyu.agentv.common.utils.parseJsonToMap
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
+import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.entity.ToolEntity
 import cn.bobasyu.agentv.domain.vals.FunctionCallBooleanParam
 import cn.bobasyu.agentv.domain.vals.FunctionCallEnumParam
 import cn.bobasyu.agentv.domain.vals.FunctionCallExecutor
 import cn.bobasyu.agentv.domain.vals.FunctionCallNumberParam
-import cn.bobasyu.agentv.domain.vals.FunctionCallParam
 import cn.bobasyu.agentv.domain.vals.FunctionCallStringParam
 import cn.bobasyu.agentv.domain.vals.McpConfigVal
 import cn.bobasyu.agentv.domain.vals.MessageRole
@@ -23,12 +23,10 @@ import dev.langchain4j.mcp.client.DefaultMcpClient
 import dev.langchain4j.mcp.client.transport.McpTransport
 import dev.langchain4j.mcp.client.transport.http.HttpMcpTransport
 import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport
-import dev.langchain4j.model.chat.request.json.JsonBooleanSchema
-import dev.langchain4j.model.chat.request.json.JsonNumberSchema
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema
-import dev.langchain4j.model.chat.request.json.JsonSchemaElement
-import dev.langchain4j.model.chat.request.json.JsonStringSchema
+import dev.langchain4j.model.embedding.EmbeddingModel
 import dev.langchain4j.model.ollama.OllamaChatModel
+import dev.langchain4j.model.ollama.OllamaEmbeddingModel
 import dev.langchain4j.service.tool.ToolExecutor
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -100,4 +98,11 @@ fun toolExecutor(functionCallExecutor: KClass<FunctionCallExecutor>) = ToolExecu
         // 日志记录或包装异常返回错误信息
         throw RuntimeException("Tool execution failed: ${e.message}", e)
     }
+}
+
+fun ollamaEmbeddingModel(embeddingEntity: EmbeddingEntity): EmbeddingModel {
+    val embeddingModel: EmbeddingModel = OllamaEmbeddingModel.builder()
+        .modelName(embeddingEntity.modelName)
+        .build()
+    return embeddingModel
 }

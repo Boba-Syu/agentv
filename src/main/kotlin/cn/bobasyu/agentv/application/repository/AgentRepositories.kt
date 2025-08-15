@@ -1,9 +1,9 @@
 package cn.bobasyu.agentv.application.repository
 
 import cn.bobasyu.agentv.application.ApplicationContext
-import cn.bobasyu.agentv.domain.repository.comand.AgentCommandRepository
+import cn.bobasyu.agentv.domain.repository.comand.AgentRepository
 import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
-import cn.bobasyu.agentv.infrastructure.repository.command.AgentCommandRepositoryImpl
+import cn.bobasyu.agentv.infrastructure.repository.command.AgentRepositoryImpl
 import cn.bobasyu.agentv.infrastructure.repository.query.AgentQueryRepositoryImpl
 
 object Query {
@@ -13,8 +13,8 @@ object Query {
 }
 
 object Command {
-    val agentCommandRepository: AgentCommandRepository by lazy {
-        AgentCommandRepositoryImpl(
+    val agentRepository: AgentRepository by lazy {
+        AgentRepositoryImpl(
             Query.agentQueryRepository,
             ApplicationContext.instance.databaseHandler
         )

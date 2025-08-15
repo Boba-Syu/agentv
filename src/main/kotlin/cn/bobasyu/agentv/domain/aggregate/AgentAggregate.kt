@@ -1,6 +1,6 @@
 package cn.bobasyu.agentv.domain.aggregate
 
-import cn.bobasyu.agentv.application.repository.Command.agentCommandRepository
+import cn.bobasyu.agentv.application.repository.Command.agentRepository
 import cn.bobasyu.agentv.common.vals.Aggregate
 import cn.bobasyu.agentv.domain.entity.AgentEntity
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
@@ -44,7 +44,7 @@ data class AgentAggregate(
      * 聊天
      */
     fun chat(userMessage: UserMessageVal): AssistantMessageVal {
-        val assistantMessage = agentCommandRepository.chat(this, userMessage)
+        val assistantMessage = agentRepository.chat(this, userMessage)
         messages.add(assistantMessage)
         return assistantMessage
     }

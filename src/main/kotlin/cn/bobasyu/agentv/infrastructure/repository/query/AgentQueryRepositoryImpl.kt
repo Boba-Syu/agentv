@@ -4,7 +4,7 @@ import cn.bobasyu.agentv.common.repository.DatabaseHandler
 import cn.bobasyu.agentv.domain.entity.AgentEntity
 import cn.bobasyu.agentv.domain.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.entity.McpEntity
-import cn.bobasyu.agentv.domain.entity.RagEntity
+import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.entity.ToolEntity
 import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.domain.vals.AgentId
@@ -17,7 +17,7 @@ import cn.bobasyu.agentv.domain.vals.RagId
 import cn.bobasyu.agentv.domain.vals.SystemMessageVal
 import cn.bobasyu.agentv.domain.vals.ToolId
 import cn.bobasyu.agentv.domain.vals.UserMessageVal
-import cn.bobasyu.agentv.domain.vals.chatModelSourceType
+import cn.bobasyu.agentv.domain.vals.modelSourceType
 import cn.bobasyu.agentv.domain.vals.mcpTransportType
 import cn.bobasyu.agentv.domain.vals.messageRole
 import cn.bobasyu.agentv.infrastructure.record.AgentRecord
@@ -29,7 +29,6 @@ import cn.bobasyu.agentv.infrastructure.record.embeddingRecords
 import cn.bobasyu.agentv.infrastructure.record.mcpRecords
 import org.ktorm.dsl.asc
 import org.ktorm.dsl.eq
-import org.ktorm.dsl.from
 import org.ktorm.dsl.inList
 import org.ktorm.dsl.map
 import org.ktorm.dsl.orderBy
@@ -69,7 +68,7 @@ class AgentQueryRepositoryImpl(
             modelName = chatModelRecord.modelName,
             role = if (chatModelRecord.role == null) null else SystemMessageVal(chatModelRecord.role!!),
             config = chatModelRecord.config,
-            sourceType = chatModelSourceType(chatModelRecord.sourceType)
+            sourceType = modelSourceType(chatModelRecord.sourceType)
         )
     }
 
@@ -106,17 +105,19 @@ class AgentQueryRepositoryImpl(
             }
     }
 
-    override fun findEmbeddingModelEntity(ragId: RagId): RagEntity {
+    override fun findEmbeddingModelEntity(ragId: RagId): EmbeddingEntity {
         val embeddingRecord = databaseHandler.embeddingRecords.find {
             it.id eq ragId.value
         }
         if (embeddingRecord == null) {
             throw Exception("embeddingRecord not found")
         }
-        return RagEntity(
+        return EmbeddingEntity(
             id = RagId(embeddingRecord.id),
-            model = embeddingRecord.modelName,
-            embeddingSetting = embeddingRecord.config
+            modelName = embeddingRecord.modelName,
+            embeddingSetting = embeddingRecord.config,
+            sourceType = modelSourceType(embeddingRecord.sourceType),
+            dimension = embeddingRecord.dimension
         )
 
     }

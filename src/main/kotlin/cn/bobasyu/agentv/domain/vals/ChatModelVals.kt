@@ -5,12 +5,12 @@ data class ChatModelConfigVal(
     var maxMessage: Int?
 )
 
-enum class ChatModelSourceType {
+enum class ModelSourceType {
     OLLAMA, OPENAI, VOLCENGINE
 }
 
-fun chatModelSourceType(str: String): ChatModelSourceType {
-    for (value in ChatModelSourceType.entries) {
+fun modelSourceType(str: String): ModelSourceType {
+    for (value in ModelSourceType.entries) {
         if (value.name == str.uppercase()) {
             return value
         }

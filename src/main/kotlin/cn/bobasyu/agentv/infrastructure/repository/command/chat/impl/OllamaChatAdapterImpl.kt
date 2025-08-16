@@ -5,10 +5,10 @@ import cn.bobasyu.agentv.domain.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.vals.AgentAssistant
 import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
 import cn.bobasyu.agentv.domain.vals.UserMessageVal
-import cn.bobasyu.agentv.infrastructure.converter.mcpClients
-import cn.bobasyu.agentv.infrastructure.converter.ollamaChatModel
-import cn.bobasyu.agentv.infrastructure.converter.toolExecutor
-import cn.bobasyu.agentv.infrastructure.converter.toolSpecification
+import cn.bobasyu.agentv.infrastructure.converter.toMcpClients
+import cn.bobasyu.agentv.infrastructure.converter.toOllamaChatModel
+import cn.bobasyu.agentv.infrastructure.converter.toToolExecutor
+import cn.bobasyu.agentv.infrastructure.converter.toToolSpecification
 import cn.bobasyu.agentv.infrastructure.repository.RepositoryContext.persistentChatMemoryStore
 import cn.bobasyu.agentv.infrastructure.repository.command.chat.ChatAdapter
 import dev.langchain4j.agent.tool.ToolSpecification
@@ -24,7 +24,7 @@ class OllamaChatAdapterImpl: ChatAdapter {
     ): AssistantMessageVal {
         // 模型
         val chatModelEntity = agentAggregate.chatModel
-        val ollamaChatModel = ollamaChatModel(chatModelEntity)
+        val ollamaChatModel = toOllamaChatModel(chatModelEntity)
         // 记忆
         val chatMemory = MessageWindowChatMemory.builder()
             .id(chatModelEntity.id)
@@ -33,11 +33,11 @@ class OllamaChatAdapterImpl: ChatAdapter {
             .build()
         // mcp
         val mcpToolProvider = McpToolProvider.builder()
-            .mcpClients(mcpClients(agentAggregate.mcpList.map { it.config }))
+            .mcpClients(toMcpClients(agentAggregate.mcpList.map { it.config }))
             .build()
         // tools 配置
         val toolSpecificationMap: Map<ToolSpecification, ToolExecutor> = agentAggregate.tools
-            .associate { toolSpecification(it) to toolExecutor(it.functionCallExecutor) }
+            .associate { toToolSpecification(it) to toToolExecutor(it.functionCallExecutor) }
 
         val agentAssistant = AiServices.builder(AgentAssistant::class.java)
             .chatMemory(chatMemory)
@@ -53,7 +53,7 @@ class OllamaChatAdapterImpl: ChatAdapter {
         chatModel: ChatModelEntity,
         message: UserMessageVal
     ): AssistantMessageVal {
-        val ollamaChatModel = ollamaChatModel(chatModel)
+        val ollamaChatModel = toOllamaChatModel(chatModel)
         val agentAssistant = AiServices.builder(AgentAssistant::class.java)
             .chatModel(ollamaChatModel)
             .build()

@@ -3,27 +3,13 @@ package cn.bobasyu.agentv.domain.vals
 /**
  * 文档实体
  */
-data class DocumentVal(
-    /**
-     * 文档原始内容
-     */
-    val content: String,
-    /**
-     * 元数据键值对（作者、类别、版本等）
-     */
-    val metadata: Map<String, String>
-)
-
-/**
- * 文本片段
- */
 data class TextSegmentVal(
     /**
      * 片段文本内容
      */
     val text: String,
     /**
-     * 元数据（可继承文档元数据）
+     * 元数据
      */
     val metadata: Map<String, Any>,
 )
@@ -39,7 +25,12 @@ data class AnswerVal(
     /**
      * 支撑答案的片段
      */
-    val supportSegments: List<TextSegmentVal>
+    val supportSegments: List<TextSegmentVal>,
+
+    /**
+     * 处理时间
+     */
+    val processTime: Long
 )
 
 enum class FilterOperator {

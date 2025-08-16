@@ -1,10 +1,16 @@
 package cn.bobasyu.agentv.domain.entity
 
+import cn.bobasyu.agentv.application.repository.Command.agentRepository
+import cn.bobasyu.agentv.application.repository.Command.ragRepository
 import cn.bobasyu.agentv.common.vals.Entity
+import cn.bobasyu.agentv.domain.vals.AnswerVal
+import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
 import cn.bobasyu.agentv.domain.vals.ChatModelConfigVal
 import cn.bobasyu.agentv.domain.vals.ChatModelId
+import cn.bobasyu.agentv.domain.vals.MetadataFilter
 import cn.bobasyu.agentv.domain.vals.ModelSourceType
 import cn.bobasyu.agentv.domain.vals.SystemMessageVal
+import cn.bobasyu.agentv.domain.vals.UserMessageVal
 
 /**
  * 聊天模型实体
@@ -30,4 +36,10 @@ data class ChatModelEntity(
      * 模型来源
      */
     var sourceType: ModelSourceType
-) : Entity<ChatModelId>(id)
+) : Entity<ChatModelId>(id) {
+
+    /**
+     * 聊天
+     */
+    fun chat(message: UserMessageVal): AssistantMessageVal = agentRepository.chat(this, message)
+}

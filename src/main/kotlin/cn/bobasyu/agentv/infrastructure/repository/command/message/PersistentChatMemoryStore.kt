@@ -6,7 +6,7 @@ import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
 import cn.bobasyu.agentv.domain.vals.MessageVal
 import cn.bobasyu.agentv.domain.vals.SystemMessageVal
 import cn.bobasyu.agentv.domain.vals.UserMessageVal
-import cn.bobasyu.agentv.infrastructure.converter.langChain4jMessage
+import cn.bobasyu.agentv.infrastructure.converter.toLangChain4jMessage
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.ChatMessageType
@@ -21,7 +21,7 @@ class PersistentChatMemoryStore(
     override fun getMessages(memoryId: Any): List<ChatMessage> {
         val agentId = memoryId as Long
         return agentRepository.query().findMessages(AgentId(agentId))
-            .map { langChain4jMessage(it) }
+            .map { toLangChain4jMessage(it) }
     }
 
     override fun updateMessages(memoryId: Any, chetMessages: List<ChatMessage>) {

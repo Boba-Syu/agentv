@@ -1,26 +1,29 @@
 package cn.bobasyu.agentv.infrastructure.repository.command.rag
 
-import dev.langchain4j.data.segment.TextSegment
+import cn.bobasyu.agentv.domain.entity.ChatModelEntity
+import cn.bobasyu.agentv.domain.vals.ModelSourceType
+import cn.bobasyu.agentv.domain.vals.TextSegmentVal
+import cn.bobasyu.agentv.infrastructure.repository.command.rag.impl.LangChainAnswerGenerator
 
 
 /**
  * 答案生成器接口：抽象大语言模型调用
  */
-internal interface AnswerGenerator {
+interface AnswerGenerator {
     /**
      * 根据问题和上下文生成答案
      * @param question 用户问题
      * @param context 相关上下文片段
+     * @param systemPrompt 系统级指令
      * @return 生成的答案文本
      */
-    fun generateAnswer(question: String, context: MutableList<TextSegment>): String
+    fun generateAnswer(question: String, context: List<TextSegmentVal>, systemPrompt: String? = null): String
+}
 
-    /**
-     * 带系统提示的答案生成
-     * @param systemPrompt 系统级指令
-     * @param question 用户问题
-     * @param context 相关上下文片段
-     * @return 生成的答案
-     */
-    fun generateAnswerWithPrompt(systemPrompt: String, question: String, context: MutableList<TextSegment>): String
+object AnswerGeneratorFactory {
+
+    fun answerGenerator(chatModelEntity: ChatModelEntity): AnswerGenerator = when (chatModelEntity.sourceType) {
+        ModelSourceType.OLLAMA -> LangChainAnswerGenerator(chatModelEntity)
+        else -> TODO()
+    }
 }

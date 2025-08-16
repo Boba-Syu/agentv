@@ -14,46 +14,47 @@ import cn.bobasyu.agentv.domain.vals.MessageRole
 import cn.bobasyu.agentv.domain.vals.MessageVal
 import cn.bobasyu.agentv.domain.vals.SseMcpConfigVal
 import cn.bobasyu.agentv.domain.vals.StdioMcpConfigVal
+import cn.bobasyu.agentv.domain.vals.TextSegmentVal
 import dev.langchain4j.agent.tool.ToolSpecification
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
+import dev.langchain4j.data.segment.TextSegment
 import dev.langchain4j.mcp.client.DefaultMcpClient
 import dev.langchain4j.mcp.client.transport.McpTransport
 import dev.langchain4j.mcp.client.transport.http.HttpMcpTransport
 import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema
-import dev.langchain4j.model.embedding.EmbeddingModel
 import dev.langchain4j.model.ollama.OllamaChatModel
 import dev.langchain4j.model.ollama.OllamaEmbeddingModel
 import dev.langchain4j.service.tool.ToolExecutor
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-fun langChain4jMessage(messageVal: MessageVal): ChatMessage = when (messageVal.role) {
+fun toLangChain4jMessage(messageVal: MessageVal): ChatMessage = when (messageVal.role) {
     MessageRole.SYSTEM -> SystemMessage(messageVal.content)
     MessageRole.USER -> UserMessage(messageVal.content)
     MessageRole.ASSISTANT -> AiMessage(messageVal.content)
 }
 
-fun ollamaChatModel(chatModelEntity: ChatModelEntity): OllamaChatModel = OllamaChatModel.builder()
+fun toOllamaChatModel(chatModelEntity: ChatModelEntity): OllamaChatModel = OllamaChatModel.builder()
     .modelName(chatModelEntity.modelName)
     .temperature(chatModelEntity.config?.temperature)
     .build()
 
-fun mcpClients(mcpConfigVals: List<McpConfigVal>): List<DefaultMcpClient> = mcpConfigVals.map { mcpClient(it) }
+fun toMcpClients(mcpConfigVals: List<McpConfigVal>): List<DefaultMcpClient> = mcpConfigVals.map { toMcpClient(it) }
 
-fun mcpClient(mcpConfigVal: McpConfigVal): DefaultMcpClient = DefaultMcpClient.Builder()
-    .transport(mcpTransport(mcpConfigVal))
+fun toMcpClient(mcpConfigVal: McpConfigVal): DefaultMcpClient = DefaultMcpClient.Builder()
+    .transport(toMcpTransport(mcpConfigVal))
     .build()
 
-fun mcpTransport(mcpConfigVal: McpConfigVal): McpTransport = when (mcpConfigVal) {
-    is StdioMcpConfigVal -> stdioMcpTransport(mcpConfigVal)
-    is SseMcpConfigVal -> sseMcpTransport(mcpConfigVal)
+fun toMcpTransport(mcpConfigVal: McpConfigVal): McpTransport = when (mcpConfigVal) {
+    is StdioMcpConfigVal -> toStdioMcpTransport(mcpConfigVal)
+    is SseMcpConfigVal -> toSseMcpTransport(mcpConfigVal)
 }
 
-fun stdioMcpTransport(mcpConfigVal: StdioMcpConfigVal): StdioMcpTransport {
+fun toStdioMcpTransport(mcpConfigVal: StdioMcpConfigVal): StdioMcpTransport {
     val command = mutableListOf(mcpConfigVal.command)
     mcpConfigVal.args.forEach { command.add(it) }
     return StdioMcpTransport.Builder()
@@ -62,20 +63,20 @@ fun stdioMcpTransport(mcpConfigVal: StdioMcpConfigVal): StdioMcpTransport {
         .build()
 }
 
-fun sseMcpTransport(mcpConfigVal: SseMcpConfigVal): HttpMcpTransport = HttpMcpTransport.Builder()
+fun toSseMcpTransport(mcpConfigVal: SseMcpConfigVal): HttpMcpTransport = HttpMcpTransport.Builder()
     .sseUrl(mcpConfigVal.url)
     .logRequests(true)
     .logResponses(true)
     .build()
 
-fun toolSpecification(toolEntity: ToolEntity): ToolSpecification =
+fun toToolSpecification(toolEntity: ToolEntity): ToolSpecification =
     ToolSpecification.builder()
         .name(toolEntity.name)
         .description(toolEntity.description)
-        .parameters(jsonObjectSchema(toolEntity))
+        .parameters(toJsonObjectSchema(toolEntity))
         .build()
 
-fun jsonObjectSchema(toolEntity: ToolEntity): JsonObjectSchema {
+fun toJsonObjectSchema(toolEntity: ToolEntity): JsonObjectSchema {
     val jsonObjectSchema = JsonObjectSchema.builder()
     toolEntity.parameters.forEach { param ->
         when (param) {
@@ -88,7 +89,7 @@ fun jsonObjectSchema(toolEntity: ToolEntity): JsonObjectSchema {
     return jsonObjectSchema.build()
 }
 
-fun toolExecutor(functionCallExecutor: KClass<FunctionCallExecutor>) = ToolExecutor { toolExecutionRequest, _ ->
+fun toToolExecutor(functionCallExecutor: KClass<FunctionCallExecutor>) = ToolExecutor { toolExecutionRequest, _ ->
     try {
         val functionCallExecutor = functionCallExecutor.createInstance()
         val arguments: String = toolExecutionRequest.arguments()
@@ -100,9 +101,20 @@ fun toolExecutor(functionCallExecutor: KClass<FunctionCallExecutor>) = ToolExecu
     }
 }
 
-fun ollamaEmbeddingModel(embeddingEntity: EmbeddingEntity): EmbeddingModel {
-    val embeddingModel: EmbeddingModel = OllamaEmbeddingModel.builder()
+fun toOllamaEmbeddingModel(embeddingEntity: EmbeddingEntity): OllamaEmbeddingModel {
+    val embeddingModel: OllamaEmbeddingModel = OllamaEmbeddingModel.builder()
         .modelName(embeddingEntity.modelName)
         .build()
     return embeddingModel
 }
+
+fun toTextSegment(domainSegment: TextSegmentVal): TextSegment {
+    val metadata = dev.langchain4j.data.document.Metadata(domainSegment.metadata)
+    return TextSegment.from(domainSegment.text, metadata)
+}
+
+fun toTextSegmentVal(langChainSegment: TextSegment): TextSegmentVal =
+    TextSegmentVal(
+        text = langChainSegment.text(),
+        metadata = langChainSegment.metadata().toMap() ?: mutableMapOf(),
+    )

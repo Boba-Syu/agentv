@@ -3,6 +3,10 @@ package cn.bobasyu.agentv.infrastructure.repository.command.rag
 import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.vals.ModelSourceType
 import cn.bobasyu.agentv.infrastructure.repository.command.rag.impl.OllamaTextEmbedder
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
+import java.util.concurrent.TimeUnit
 
 /**
  * 文本嵌入适配器：负责文本到向量的转换
@@ -11,21 +15,28 @@ interface TextEmbedder {
     /**
      * 单文本向量化
      */
-    fun embedText(embeddingEntity: EmbeddingEntity, text: String): List<Float>
+    fun embedText(text: String): List<Float>
 
     /**
      * 批量向量化处理
      */
-    fun embedBatch(embeddingEntity: EmbeddingEntity, texts: List<String>): List<List<Float>>
+    fun embedBatch(texts: List<String>): List<List<Float>>
+
+    fun dimension(): Int
 }
 
-object TextEmbedderHolder {
+object TextEmbedderFactory {
 
-    val ollamaTextEmbedder: OllamaTextEmbedder by lazy { OllamaTextEmbedder() }
+    private val textEmbedderHolder: LoadingCache<EmbeddingEntity, TextEmbedder> = CacheBuilder.newBuilder()
+        .maximumSize(1000)
+        .expireAfterWrite(1, TimeUnit.HOURS)
+        .build(object : CacheLoader<EmbeddingEntity, TextEmbedder>() {
+            override fun load(embeddingEntity: EmbeddingEntity) = when (embeddingEntity.sourceType) {
+                ModelSourceType.OPENAI -> TODO()
+                ModelSourceType.VOLCENGINE -> TODO()
+                ModelSourceType.OLLAMA -> OllamaTextEmbedder(embeddingEntity)
+            }
+        })
 
-    fun textEmbedder(sourceType: ModelSourceType): TextEmbedder = when (sourceType) {
-        ModelSourceType.OPENAI -> TODO()
-        ModelSourceType.VOLCENGINE -> TODO()
-        ModelSourceType.OLLAMA -> ollamaTextEmbedder
-    }
+    fun textEmbedder(embeddingEntity: EmbeddingEntity): TextEmbedder = textEmbedderHolder.get(embeddingEntity)
 }

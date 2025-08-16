@@ -1,0 +1,33 @@
+package cn.bobasyu.agentv.infrastructure.repository.command.rag.impl
+
+import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
+import cn.bobasyu.agentv.domain.vals.MetadataFilter
+import cn.bobasyu.agentv.domain.vals.TextSegmentVal
+import cn.bobasyu.agentv.infrastructure.converter.toOllamaEmbeddingModel
+import cn.bobasyu.agentv.infrastructure.converter.toPgVectorEmbeddingStore
+import cn.bobasyu.agentv.infrastructure.converter.toTextSegmentVal
+import cn.bobasyu.agentv.infrastructure.extend.findRelevant
+import cn.bobasyu.agentv.infrastructure.repository.command.rag.ContextRetriever
+import dev.langchain4j.data.embedding.Embedding
+import dev.langchain4j.data.segment.TextSegment
+
+class LangChainContextRetriever(
+    embeddingEntity: EmbeddingEntity
+) : ContextRetriever {
+    val embeddingModel = toOllamaEmbeddingModel(embeddingEntity)
+
+    val embeddingStore = toPgVectorEmbeddingStore(embeddingEntity)
+
+    override fun retrieveContext(
+        question: String,
+        maxResults: Int?,
+        filter: List<MetadataFilter>
+    ): List<TextSegmentVal> {
+        // 生成问题向量
+        val questionEmbedding: Embedding = embeddingModel.embed(question).content()
+        // 检索相似段落
+        val results: List<TextSegment> = embeddingStore.findRelevant(questionEmbedding, maxResults, filter)
+
+        return results.map { toTextSegmentVal(it) }
+    }
+}

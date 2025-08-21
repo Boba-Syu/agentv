@@ -1,9 +1,9 @@
 package cn.bobasyu.agentv.infrastructure.repository.command.rag.impl
 
-import cn.bobasyu.agentv.domain.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
-import cn.bobasyu.agentv.domain.vals.MetadataFilter
-import cn.bobasyu.agentv.domain.vals.TextSegmentVal
+import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
+import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
+import cn.bobasyu.agentv.domain.base.vals.MetadataFilter
+import cn.bobasyu.agentv.domain.base.vals.TextSegmentVal
 import cn.bobasyu.agentv.infrastructure.converter.toPgVectorEmbeddingStore
 import cn.bobasyu.agentv.infrastructure.converter.toTextSegment
 import cn.bobasyu.agentv.infrastructure.converter.toTextSegmentVal

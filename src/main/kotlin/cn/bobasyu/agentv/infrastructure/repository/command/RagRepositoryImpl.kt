@@ -1,11 +1,11 @@
 package cn.bobasyu.agentv.infrastructure.repository.command
 
-import cn.bobasyu.agentv.domain.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
-import cn.bobasyu.agentv.domain.repository.comand.RagRepository
-import cn.bobasyu.agentv.domain.vals.AnswerVal
-import cn.bobasyu.agentv.domain.vals.MetadataFilter
-import cn.bobasyu.agentv.domain.vals.TextSegmentVal
+import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
+import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
+import cn.bobasyu.agentv.domain.base.repository.comand.RagRepository
+import cn.bobasyu.agentv.domain.base.vals.AnswerVal
+import cn.bobasyu.agentv.domain.base.vals.MetadataFilter
+import cn.bobasyu.agentv.domain.base.vals.TextSegmentVal
 import cn.bobasyu.agentv.infrastructure.repository.command.rag.AnswerGeneratorFactory
 import cn.bobasyu.agentv.infrastructure.repository.command.rag.ContextRetrieverFactory
 import cn.bobasyu.agentv.infrastructure.repository.command.rag.TextEmbedderFactory

@@ -1,9 +1,9 @@
 package cn.bobasyu.agentv.infrastructure.repository.command.rag
 
-import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
-import cn.bobasyu.agentv.domain.vals.MetadataFilter
-import cn.bobasyu.agentv.domain.vals.ModelSourceType
-import cn.bobasyu.agentv.domain.vals.TextSegmentVal
+import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
+import cn.bobasyu.agentv.domain.base.vals.MetadataFilter
+import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
+import cn.bobasyu.agentv.domain.base.vals.TextSegmentVal
 import cn.bobasyu.agentv.infrastructure.repository.command.rag.impl.OllamaVectorStoreAdapter
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader

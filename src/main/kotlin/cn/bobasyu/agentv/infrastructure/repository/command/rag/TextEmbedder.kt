@@ -1,7 +1,7 @@
 package cn.bobasyu.agentv.infrastructure.repository.command.rag
 
-import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
-import cn.bobasyu.agentv.domain.vals.ModelSourceType
+import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
+import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
 import cn.bobasyu.agentv.infrastructure.repository.command.rag.impl.OllamaTextEmbedder
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader

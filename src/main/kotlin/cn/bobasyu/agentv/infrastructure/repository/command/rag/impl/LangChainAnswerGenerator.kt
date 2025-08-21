@@ -1,7 +1,7 @@
 package cn.bobasyu.agentv.infrastructure.repository.command.rag.impl
 
-import cn.bobasyu.agentv.domain.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.vals.TextSegmentVal
+import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
+import cn.bobasyu.agentv.domain.base.vals.TextSegmentVal
 import cn.bobasyu.agentv.infrastructure.converter.toOllamaChatModel
 import cn.bobasyu.agentv.infrastructure.repository.command.rag.AnswerGenerator
 

@@ -1,6 +1,6 @@
 package cn.bobasyu.agentv.infrastructure.converter
 
-import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
+import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore
 
 fun toPgVectorEmbeddingStore(embeddingEntity: EmbeddingEntity): PgVectorEmbeddingStore {

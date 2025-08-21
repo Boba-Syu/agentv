@@ -1,11 +1,11 @@
 package cn.bobasyu.agentv.infrastructure.repository.command.message
 
-import cn.bobasyu.agentv.domain.repository.comand.AgentRepository
-import cn.bobasyu.agentv.domain.vals.AgentId
-import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
-import cn.bobasyu.agentv.domain.vals.MessageVal
-import cn.bobasyu.agentv.domain.vals.SystemMessageVal
-import cn.bobasyu.agentv.domain.vals.UserMessageVal
+import cn.bobasyu.agentv.domain.base.repository.comand.AgentRepository
+import cn.bobasyu.agentv.domain.base.vals.AgentId
+import cn.bobasyu.agentv.domain.base.vals.AssistantMessageVal
+import cn.bobasyu.agentv.domain.base.vals.MessageVal
+import cn.bobasyu.agentv.domain.base.vals.SystemMessageVal
+import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
 import cn.bobasyu.agentv.infrastructure.converter.toLangChain4jMessage
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage

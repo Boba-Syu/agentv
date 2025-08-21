@@ -1,7 +1,7 @@
 package cn.bobasyu.agentv.infrastructure.extend
 
-import cn.bobasyu.agentv.domain.vals.FilterOperator
-import cn.bobasyu.agentv.domain.vals.MetadataFilter
+import cn.bobasyu.agentv.domain.base.vals.FilterOperator
+import cn.bobasyu.agentv.domain.base.vals.MetadataFilter
 import dev.langchain4j.data.embedding.Embedding
 import dev.langchain4j.data.segment.TextSegment
 import dev.langchain4j.store.embedding.EmbeddingSearchRequest

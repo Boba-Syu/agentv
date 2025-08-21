@@ -2,16 +2,16 @@ package cn.bobasyu.agentv.infrastructure.repository.command
 
 import cn.bobasyu.agentv.common.repository.DatabaseHandler
 import cn.bobasyu.agentv.common.utils.generateId
-import cn.bobasyu.agentv.domain.aggregate.AgentAggregate
-import cn.bobasyu.agentv.domain.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.repository.comand.AgentRepository
-import cn.bobasyu.agentv.domain.repository.query.AgentQueryRepository
-import cn.bobasyu.agentv.domain.vals.AgentId
-import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
-import cn.bobasyu.agentv.domain.vals.ChatModelId
-import cn.bobasyu.agentv.domain.vals.McpId
-import cn.bobasyu.agentv.domain.vals.MessageVal
-import cn.bobasyu.agentv.domain.vals.UserMessageVal
+import cn.bobasyu.agentv.domain.base.aggregate.AgentAggregate
+import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
+import cn.bobasyu.agentv.domain.base.repository.comand.AgentRepository
+import cn.bobasyu.agentv.domain.base.repository.query.AgentQueryRepository
+import cn.bobasyu.agentv.domain.base.vals.AgentId
+import cn.bobasyu.agentv.domain.base.vals.AssistantMessageVal
+import cn.bobasyu.agentv.domain.base.vals.ChatModelId
+import cn.bobasyu.agentv.domain.base.vals.McpId
+import cn.bobasyu.agentv.domain.base.vals.MessageVal
+import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
 import cn.bobasyu.agentv.infrastructure.record.AgentRecords
 import cn.bobasyu.agentv.infrastructure.record.ChatMessageRecords
 import cn.bobasyu.agentv.infrastructure.repository.command.chat.ChatAdapterHolder

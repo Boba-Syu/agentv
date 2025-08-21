@@ -1,6 +1,6 @@
 package cn.bobasyu.agentv.infrastructure.repository.command.rag.impl
 
-import cn.bobasyu.agentv.domain.entity.EmbeddingEntity
+import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.infrastructure.converter.toOllamaEmbeddingModel
 import cn.bobasyu.agentv.infrastructure.repository.command.rag.TextEmbedder
 import dev.langchain4j.data.segment.TextSegment

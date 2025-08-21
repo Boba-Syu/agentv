@@ -1,10 +1,10 @@
 package cn.bobasyu.agentv.infrastructure.repository.command.chat
 
-import cn.bobasyu.agentv.domain.aggregate.AgentAggregate
-import cn.bobasyu.agentv.domain.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.vals.AssistantMessageVal
-import cn.bobasyu.agentv.domain.vals.ModelSourceType
-import cn.bobasyu.agentv.domain.vals.UserMessageVal
+import cn.bobasyu.agentv.domain.base.aggregate.AgentAggregate
+import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
+import cn.bobasyu.agentv.domain.base.vals.AssistantMessageVal
+import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
+import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
 import cn.bobasyu.agentv.infrastructure.repository.command.chat.impl.OllamaChatAdapterImpl
 
 interface ChatAdapter {

@@ -22,6 +22,7 @@ val langchain4jVersion = "1.2.0"
 val langchain4jMcpVersion = "1.2.0-beta8"
 val langchain4jPgVectorVersion = "0.36.2"
 val pgVersion = "42.7.3"
+val kotlinVersion = "2.2.10"
 
 dependencies {
     testImplementation(kotlin("test"))
@@ -56,6 +57,8 @@ dependencies {
     implementation("org.mockito:mockito-core:${mockitoVersion}")
     implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
     implementation("com.google.guava:guava:${guavaVersion}")
+
+    runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 }
 
 tasks.test {

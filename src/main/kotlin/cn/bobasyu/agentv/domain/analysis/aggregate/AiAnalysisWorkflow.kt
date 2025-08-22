@@ -10,6 +10,7 @@ import cn.bobasyu.agentv.domain.base.vals.Chain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
 data class AiAnalysisWorkFlowAggregate(
@@ -30,7 +31,8 @@ data class AiAnalysisWorkFlowAggregate(
                 }
             }
         return CoroutineScope(Dispatchers.Default).launch {
-            chainList.forEach { it.execute() }
+            chainList.map { launch { it.execute() } }
+                .joinAll()
         }
     }
 }

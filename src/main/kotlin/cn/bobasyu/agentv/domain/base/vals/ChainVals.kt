@@ -5,14 +5,14 @@ package cn.bobasyu.agentv.domain.base.vals
  * 工作流节点
  */
 interface ChainNode<in REQ, out RESP> {
-    suspend fun process(req: REQ): RESP
+    fun process(req: REQ): RESP
 
     /**
      * 操作符重载：实现 类似 | 管道操作符
      */
     infix fun <NEXT_RESP> pipe(next: ChainNode<RESP, NEXT_RESP>): ChainNode<REQ, NEXT_RESP> {
         return object : ChainNode<REQ, NEXT_RESP> {
-            override suspend fun process(req: REQ): NEXT_RESP {
+            override fun process(req: REQ): NEXT_RESP {
                 val resp: RESP = this@ChainNode.process(req)
                 return next.process(resp)
             }
@@ -31,12 +31,12 @@ interface ChainNode<in REQ, out RESP> {
  * 工作流链路
  */
 class Chain<RESP>(
-    private val producer: suspend () -> RESP
+    private val producer: () -> RESP
 ) {
     /**
      * 执行
      */
-    suspend fun execute(): RESP = producer()
+    fun execute(): RESP = producer()
 
     /**
      * 操作符重载：实现 类似 | 管道操作符

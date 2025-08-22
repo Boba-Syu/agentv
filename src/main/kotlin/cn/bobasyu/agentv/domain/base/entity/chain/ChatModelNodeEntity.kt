@@ -10,7 +10,7 @@ import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
 class ChatModelNodeEntity(
     val chatModel: ChatModelEntity
 ) : ChainNode<UserMessageVal, AssistantMessageVal> {
-    override suspend fun process(req: UserMessageVal): AssistantMessageVal {
+    override fun process(req: UserMessageVal): AssistantMessageVal {
         return agentRepository.chat(chatModel, req)
     }
 }

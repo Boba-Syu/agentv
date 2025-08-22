@@ -15,7 +15,7 @@ class AiAnalysisChainNode(
     val userRole: SystemMessageVal,
 ) : ChainNode<ChainNodeConfigVal, BaseOutputVal> {
 
-    override suspend fun process(req: ChainNodeConfigVal): BaseOutputVal {
+    override fun process(req: ChainNodeConfigVal): BaseOutputVal {
         val message = userRole.content + req.task
         val chat = Command.agentRepository.chat(chatModel, UserMessageVal(message))
         return chat.content.parseJson(req.outputParse.java)
@@ -23,7 +23,7 @@ class AiAnalysisChainNode(
 }
 
 class AiAnalysisSaveDataChainNode : ChainNode<BaseOutputVal, Unit> {
-    override suspend fun process(req: BaseOutputVal) {
+    override fun process(req: BaseOutputVal) {
         req.save()
     }
 }

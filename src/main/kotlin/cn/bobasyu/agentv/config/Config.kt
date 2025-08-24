@@ -13,3 +13,10 @@ data class DatabaseConfig(
     val user: String,
     val password: String,
 )
+
+@ConfigName("bangumi")
+data class BangumiConfig(
+    val authorization: String,
+    val baseUrl: String,
+    val userAgent: String
+)

@@ -1,6 +1,6 @@
 package cn.bobasyu.agentv.domain.base.aggregate
 
-import cn.bobasyu.agentv.application.repository.Command.agentRepository
+import cn.bobasyu.agentv.application.repository.AgentRepositories.Command.agentRepository
 import cn.bobasyu.agentv.common.vals.Aggregate
 import cn.bobasyu.agentv.domain.base.entity.AgentEntity
 import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
@@ -23,22 +23,22 @@ data class AgentAggregate(
      * 消息列表
      */
     var messages: MutableList<MessageVal> = mutableListOf(),
+    /**
+     * 工具列表
+     */
+    val tools: MutableList<ToolEntity> = mutableListOf(),
+
+    /**
+     * MCP列表
+     */
+    val mcpList: MutableList<McpEntity> = mutableListOf()
+
 ) : Aggregate<AgentId>(agent.id) {
 
     /**
      * 获取智能体模型
      */
     val chatModel: ChatModelEntity get() = agent.chatModel
-
-    /**
-     * 获取MCP列表
-     */
-    val mcpList: List<McpEntity> get() = agent.mcpList
-
-    /**
-     * 获取工具列表
-     */
-    val tools: List<ToolEntity> get() = agent.tools
 
     /**
      * 聊天

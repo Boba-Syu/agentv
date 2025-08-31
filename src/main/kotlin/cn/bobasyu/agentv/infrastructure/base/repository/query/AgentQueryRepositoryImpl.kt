@@ -3,37 +3,13 @@ package cn.bobasyu.agentv.infrastructure.base.repository.query
 import cn.bobasyu.agentv.common.repository.DatabaseHandler
 import cn.bobasyu.agentv.domain.base.entity.AgentEntity
 import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
-import cn.bobasyu.agentv.domain.base.entity.McpEntity
 import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
-import cn.bobasyu.agentv.domain.base.entity.ToolEntity
+import cn.bobasyu.agentv.domain.base.entity.McpEntity
 import cn.bobasyu.agentv.domain.base.repository.query.AgentQueryRepository
-import cn.bobasyu.agentv.domain.base.vals.AgentId
-import cn.bobasyu.agentv.domain.base.vals.AssistantMessageVal
-import cn.bobasyu.agentv.domain.base.vals.ChatModelId
-import cn.bobasyu.agentv.domain.base.vals.McpId
-import cn.bobasyu.agentv.domain.base.vals.MessageRole
-import cn.bobasyu.agentv.domain.base.vals.MessageVal
-import cn.bobasyu.agentv.domain.base.vals.RagId
-import cn.bobasyu.agentv.domain.base.vals.SystemMessageVal
-import cn.bobasyu.agentv.domain.base.vals.ToolId
-import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
-import cn.bobasyu.agentv.domain.base.vals.modelSourceType
-import cn.bobasyu.agentv.domain.base.vals.mcpTransportType
-import cn.bobasyu.agentv.domain.base.vals.messageRole
-import cn.bobasyu.agentv.infrastructure.base.record.AgentRecord
-import cn.bobasyu.agentv.infrastructure.base.record.ChatMessageRecords
-import cn.bobasyu.agentv.infrastructure.base.record.McpRecords
-import cn.bobasyu.agentv.infrastructure.base.record.agentRecords
-import cn.bobasyu.agentv.infrastructure.base.record.chatModelRecords
-import cn.bobasyu.agentv.infrastructure.base.record.embeddingRecords
-import cn.bobasyu.agentv.infrastructure.base.record.mcpRecords
-import org.ktorm.dsl.asc
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.inList
-import org.ktorm.dsl.map
-import org.ktorm.dsl.orderBy
-import org.ktorm.dsl.select
-import org.ktorm.dsl.where
+import cn.bobasyu.agentv.domain.base.vals.*
+import cn.bobasyu.agentv.infrastructure.base.record.*
+import org.ktorm.dsl.*
+import org.ktorm.entity.count
 import org.ktorm.entity.find
 
 class AgentQueryRepositoryImpl(
@@ -50,8 +26,7 @@ class AgentQueryRepositoryImpl(
         return AgentEntity(
             id = AgentId(agentRecord.id),
             chatModelId = ChatModelId(agentRecord.chatModelId),
-            mcpIdList = agentRecord.mcp.map { McpId(it) }.toMutableList(),
-            toolIdList = agentRecord.tools.map { ToolId(it) }.toMutableList()
+            memorySaveFlag = agentRecord.memorySaveFlag
         )
     }
 
@@ -72,6 +47,13 @@ class AgentQueryRepositoryImpl(
         )
     }
 
+    override fun chatModelEntityExist(chatModelId: ChatModelId): Boolean {
+        val count = databaseHandler.chatModelRecords.count {
+            it.id eq chatModelId.value
+        }
+        return count > 0
+    }
+
     override fun findMcpEntity(mcpId: McpId): McpEntity {
         val chatModelRecord = databaseHandler.mcpRecords.find {
             it.id eq mcpId.value
@@ -88,6 +70,9 @@ class AgentQueryRepositoryImpl(
     }
 
     override fun listMcpEntities(mcpIds: List<McpId>): List<McpEntity> {
+        if (mcpIds.isEmpty()) {
+            return emptyList()
+        }
         return databaseHandler.from(McpRecords)
             .select()
             .apply {
@@ -137,9 +122,5 @@ class AgentQueryRepositoryImpl(
                     MessageRole.SYSTEM -> SystemMessageVal(it.message)
                 }
             }
-    }
-
-    override fun listToolEntities(toolIdList: MutableList<ToolId>): List<ToolEntity> {
-        TODO("Not yet implemented")
     }
 }

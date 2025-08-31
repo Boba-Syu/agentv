@@ -1,6 +1,6 @@
 package cn.bobasyu.agentv.domain.base.entity.chain
 
-import cn.bobasyu.agentv.application.repository.Command.agentRepository
+import cn.bobasyu.agentv.application.repository.AgentRepositories.Command.agentRepository
 import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.base.vals.AssistantMessageVal
 import cn.bobasyu.agentv.domain.base.vals.ChainNode

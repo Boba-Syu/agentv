@@ -24,6 +24,11 @@ interface AgentRepository : BaseCommandRepository<AgentQueryRepository> {
     fun chat(chatModel: ChatModelEntity, message: UserMessageVal): AssistantMessageVal
 
     /**
+     * 保存模型
+     */
+    fun saveModel(chatModel: ChatModelEntity)
+
+    /**
      * 保存消息
      */
     fun saveMessages(

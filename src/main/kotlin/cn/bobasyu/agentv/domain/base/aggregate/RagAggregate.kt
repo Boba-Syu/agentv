@@ -1,6 +1,6 @@
 package cn.bobasyu.agentv.domain.base.aggregate
 
-import cn.bobasyu.agentv.application.repository.Command.ragRepository
+import cn.bobasyu.agentv.application.repository.AgentRepositories.Command.ragRepository
 import cn.bobasyu.agentv.common.vals.Aggregate
 import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.vals.AnswerVal

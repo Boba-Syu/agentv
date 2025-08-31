@@ -15,21 +15,22 @@ import org.ktorm.schema.varchar
 import java.time.LocalDateTime
 
 object McpRecords : Table<McpRecord>(TABLE_NAME) {
-    const val TABLE_NAME = "agent_record"
+    const val TABLE_NAME = "mcp_record"  // 修复：使用独立的表名
     const val ID_COLUMN = "id"
     const val NAME_COLUMN = "name"
     const val TYPE_COLUMN = "type"
+    const val CONFIG_COLUMN = "config"   // 添加：config列常量
     const val CREATE_AT_COLUMN = "create_at"
     const val DELETE_FLAG = "delete_flag"
 
-    val id: Column<Long> = long(AgentRecords.ID_COLUMN).primaryKey().bindTo { it.id }
-    val name: Column<String> = varchar(AgentRecords.ID_COLUMN).bindTo { it.name }
-    val type: Column<String> = varchar(AgentRecords.ID_COLUMN).bindTo { it.type }
-    val config: Column<McpConfigVal> = json<McpConfigVal>(AgentRecords.ID_COLUMN).bindTo { it.config }
-    val createAt: Column<LocalDateTime> = datetime(AgentRecords.CREATE_AT_COLUMN).bindTo { it.createdAt }
-    val deleteFlag: Column<Boolean> = boolean(AgentRecords.DELETE_FLAG).bindTo { it.deleteFlag }
-
+    val id: Column<Long> = long(ID_COLUMN).primaryKey().bindTo { it.id }
+    val name: Column<String> = varchar(NAME_COLUMN).bindTo { it.name }  // 修复：使用正确的常量
+    val type: Column<String> = varchar(TYPE_COLUMN).bindTo { it.type }  // 修复：使用正确的常量
+    val config: Column<McpConfigVal> = json<McpConfigVal>(CONFIG_COLUMN).bindTo { it.config }  // 修复：使用正确的常量
+    val createAt: Column<LocalDateTime> = datetime(CREATE_AT_COLUMN).bindTo { it.createdAt }  // 修复：使用正确的常量
+    val deleteFlag: Column<Boolean> = boolean(DELETE_FLAG).bindTo { it.deleteFlag }  // 修复：使用正确的常量
 }
+
 
 interface McpRecord : Entity<McpRecord> {
     companion object : Entity.Factory<McpRecord>()

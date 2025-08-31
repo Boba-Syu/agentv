@@ -5,13 +5,7 @@ import cn.bobasyu.agentv.domain.base.entity.AgentEntity
 import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.entity.McpEntity
-import cn.bobasyu.agentv.domain.base.entity.ToolEntity
-import cn.bobasyu.agentv.domain.base.vals.AgentId
-import cn.bobasyu.agentv.domain.base.vals.ChatModelId
-import cn.bobasyu.agentv.domain.base.vals.McpId
-import cn.bobasyu.agentv.domain.base.vals.MessageVal
-import cn.bobasyu.agentv.domain.base.vals.RagId
-import cn.bobasyu.agentv.domain.base.vals.ToolId
+import cn.bobasyu.agentv.domain.base.vals.*
 
 interface AgentQueryRepository : BaseQueryRepository {
 
@@ -24,6 +18,10 @@ interface AgentQueryRepository : BaseQueryRepository {
      * 查询ChatModel
      */
     fun findChatModelEntity(chatModelId: ChatModelId): ChatModelEntity
+    /**
+     * 查询ChatModel是否保存
+     */
+    fun chatModelEntityExist(chatModelId: ChatModelId): Boolean
 
     /**
      * 查询Mcp
@@ -44,10 +42,5 @@ interface AgentQueryRepository : BaseQueryRepository {
      * 查询消息
      */
     fun findMessages(agentId: AgentId): List<MessageVal>
-
-    /**
-     * 查询工具
-     */
-    fun listToolEntities(toolIdList: MutableList<ToolId>): List<ToolEntity>
 }
 

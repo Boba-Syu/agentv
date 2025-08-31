@@ -3,6 +3,7 @@ package cn.bobasyu.agentv.infrastructure.base.repository.command.message
 import cn.bobasyu.agentv.domain.base.repository.comand.AgentRepository
 import cn.bobasyu.agentv.domain.base.vals.AgentId
 import cn.bobasyu.agentv.domain.base.vals.AssistantMessageVal
+import cn.bobasyu.agentv.domain.base.vals.ChatModelId
 import cn.bobasyu.agentv.domain.base.vals.MessageVal
 import cn.bobasyu.agentv.domain.base.vals.SystemMessageVal
 import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
@@ -19,12 +20,13 @@ class PersistentChatMemoryStore(
     private val agentRepository: AgentRepository
 ) : ChatMemoryStore {
     override fun getMessages(memoryId: Any): List<ChatMessage> {
-        val agentId = memoryId as Long
-        return agentRepository.query().findMessages(AgentId(agentId))
+        val chatModelId = memoryId as ChatModelId
+        return agentRepository.query().findMessages(AgentId(chatModelId.value))
             .map { toLangChain4jMessage(it) }
     }
 
     override fun updateMessages(memoryId: Any, chetMessages: List<ChatMessage>) {
+        val chatModelId = memoryId as ChatModelId
         val messageVals: List<MessageVal> = chetMessages.map { chatMessage ->
             val text: String = when (chatMessage) {
                 is SystemMessage -> chatMessage.text()
@@ -39,7 +41,7 @@ class PersistentChatMemoryStore(
                 else -> throw IllegalArgumentException("Invalid role: ${chatMessage.type()}")
             }
         }
-        agentRepository.saveMessages(AgentId(memoryId as Long), messageVals)
+        agentRepository.saveMessages(AgentId(chatModelId.value), messageVals)
     }
 
     override fun deleteMessages(memoryId: Any) {

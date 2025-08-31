@@ -6,21 +6,13 @@ import cn.bobasyu.agentv.domain.base.aggregate.AgentAggregate
 import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.base.repository.comand.AgentRepository
 import cn.bobasyu.agentv.domain.base.repository.query.AgentQueryRepository
-import cn.bobasyu.agentv.domain.base.vals.AgentId
-import cn.bobasyu.agentv.domain.base.vals.AssistantMessageVal
-import cn.bobasyu.agentv.domain.base.vals.ChatModelId
-import cn.bobasyu.agentv.domain.base.vals.McpId
-import cn.bobasyu.agentv.domain.base.vals.MessageVal
-import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
+import cn.bobasyu.agentv.domain.base.vals.*
 import cn.bobasyu.agentv.infrastructure.base.record.AgentRecords
 import cn.bobasyu.agentv.infrastructure.base.record.ChatMessageRecords
+import cn.bobasyu.agentv.infrastructure.base.record.ChatModelRecords
 import cn.bobasyu.agentv.infrastructure.base.repository.command.chat.ChatAdapterHolder
-import org.ktorm.dsl.asc
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.map
-import org.ktorm.dsl.orderBy
-import org.ktorm.dsl.select
-import org.ktorm.dsl.where
+import org.ktorm.dsl.*
+import java.time.LocalDateTime
 
 
 class AgentRepositoryImpl(
@@ -40,6 +32,26 @@ class AgentRepositoryImpl(
         return chatAdapter.chat(chatModel, message)
     }
 
+    override fun saveModel(chatModel: ChatModelEntity) {
+        if (query().chatModelEntityExist(chatModel.id)) {
+            databaseHandler.update(ChatModelRecords) {
+                where { it.id eq chatModel.id.value }
+                set(it.modelName, chatModel.modelName)
+                set(it.role, chatModel.role?.message)
+                set(it.sourceType, chatModel.sourceType.name)
+            }
+        } else {
+            databaseHandler.insert(ChatModelRecords) {
+                set(it.id, chatModel.id.value)
+                set(it.modelName, chatModel.modelName)
+                set(it.role, chatModel.role?.message)
+                set(it.sourceType, chatModel.sourceType.name)
+                set(it.createAt, LocalDateTime.now())
+                set(it.deleteFlag, false)
+            }
+        }
+    }
+
     override fun saveMessages(
         agentId: AgentId,
         messages: List<MessageVal>
@@ -49,8 +61,10 @@ class AgentRepositoryImpl(
                 item {
                     set(it.id, generateId())
                     set(ChatMessageRecords.agentId, agentId.value)
-                    set(ChatMessageRecords.message, chatMessage.content)
+                    set(ChatMessageRecords.message, chatMessage.message)
                     set(ChatMessageRecords.role, chatMessage.role.name.lowercase())
+                    set(ChatMessageRecords.createAt, LocalDateTime.now())
+                    set(ChatMessageRecords.deleteFlag, false)
                 }
             }
         }
@@ -77,11 +91,9 @@ class AgentRepositoryImpl(
 
     override fun createNewAgent(chatModelId: ChatModelId, mcpIds: List<McpId>): AgentId {
         val agentId = generateId()
-        val mcpIdList = mcpIds.map { it.value }
         databaseHandler.insert(AgentRecords) {
             set(it.id, agentId)
             set(it.chatModelId, chatModelId.value)
-            set(it.mcp, mcpIdList)
         }
         return AgentId(agentId)
     }

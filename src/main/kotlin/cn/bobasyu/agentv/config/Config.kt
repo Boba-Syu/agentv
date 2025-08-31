@@ -20,3 +20,8 @@ data class BangumiConfig(
     val baseUrl: String,
     val userAgent: String
 )
+
+@ConfigName("ollama")
+data class OllamaConfig(
+    val baseUrl: String
+)

@@ -16,11 +16,11 @@ fun messageRole(role: String): MessageRole {
 
 sealed class MessageVal(
     val role: MessageRole,
-    val content: String
+    open val message: String
 )
 
-class SystemMessageVal(message: String) : MessageVal(MessageRole.SYSTEM, message)
+data class SystemMessageVal(override val message: String) : MessageVal(MessageRole.SYSTEM, message)
 
-class UserMessageVal(message: String) : MessageVal(MessageRole.USER, message)
+data class UserMessageVal(override val message: String) : MessageVal(MessageRole.USER, message)
 
-class AssistantMessageVal(message: String) : MessageVal(MessageRole.ASSISTANT, message)
+data class AssistantMessageVal(override val message: String) : MessageVal(MessageRole.ASSISTANT, message)

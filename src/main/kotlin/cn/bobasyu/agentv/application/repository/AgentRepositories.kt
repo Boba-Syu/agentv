@@ -1,24 +1,30 @@
 package cn.bobasyu.agentv.application.repository
 
 import cn.bobasyu.agentv.application.ApplicationContext
+import cn.bobasyu.agentv.domain.base.repository.comand.AgentRepository
+import cn.bobasyu.agentv.domain.base.repository.comand.RagRepository
+import cn.bobasyu.agentv.domain.base.repository.query.AgentQueryRepository
 import cn.bobasyu.agentv.infrastructure.base.repository.command.AgentRepositoryImpl
 import cn.bobasyu.agentv.infrastructure.base.repository.command.RagRepositoryImpl
 import cn.bobasyu.agentv.infrastructure.base.repository.query.AgentQueryRepositoryImpl
 
-object Query {
-    val agentQueryRepository: cn.bobasyu.agentv.domain.base.repository.query.AgentQueryRepository by lazy {
-        AgentQueryRepositoryImpl(ApplicationContext.instance.databaseHandler)
-    }
-}
+object AgentRepositories {
 
-object Command {
-    val agentRepository: cn.bobasyu.agentv.domain.base.repository.comand.AgentRepository by lazy {
-        AgentRepositoryImpl(
-            Query.agentQueryRepository,
-            ApplicationContext.instance.databaseHandler
-        )
+    object Query {
+        val agentQueryRepository: AgentQueryRepository by lazy {
+            AgentQueryRepositoryImpl(ApplicationContext.instance.databaseHandler)
+        }
     }
-    val ragRepository: cn.bobasyu.agentv.domain.base.repository.comand.RagRepository by lazy {
-        RagRepositoryImpl()
+
+    object Command {
+        val agentRepository: AgentRepository by lazy {
+            AgentRepositoryImpl(
+                Query.agentQueryRepository,
+                ApplicationContext.instance.databaseHandler
+            )
+        }
+        val ragRepository: RagRepository by lazy {
+            RagRepositoryImpl()
+        }
     }
 }

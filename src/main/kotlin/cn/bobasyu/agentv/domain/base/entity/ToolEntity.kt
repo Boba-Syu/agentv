@@ -29,5 +29,5 @@ class ToolEntity(
     /**
      * 工具执行器
      */
-    var functionCallExecutor: KClass<FunctionCallExecutor>
+    var functionCallExecutor: KClass<out FunctionCallExecutor>
 ) : Entity<ToolId>(id)

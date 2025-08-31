@@ -1,6 +1,8 @@
 package cn.bobasyu.agentv.infrastructure.base.converter
 
+import cn.bobasyu.agentv.application.ApplicationContext
 import cn.bobasyu.agentv.common.utils.parseJsonToMap
+import cn.bobasyu.agentv.config.OllamaConfig
 import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.entity.ToolEntity
@@ -33,12 +35,13 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 fun toLangChain4jMessage(messageVal: MessageVal): ChatMessage = when (messageVal.role) {
-    MessageRole.SYSTEM -> SystemMessage(messageVal.content)
-    MessageRole.USER -> UserMessage(messageVal.content)
-    MessageRole.ASSISTANT -> AiMessage(messageVal.content)
+    MessageRole.SYSTEM -> SystemMessage(messageVal.message)
+    MessageRole.USER -> UserMessage(messageVal.message)
+    MessageRole.ASSISTANT -> AiMessage(messageVal.message)
 }
 
 fun toOllamaChatModel(chatModelEntity: ChatModelEntity): OllamaChatModel = OllamaChatModel.builder()
+    .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
     .modelName(chatModelEntity.modelName)
     .temperature(chatModelEntity.config?.temperature)
     .build()
@@ -89,7 +92,7 @@ fun toJsonObjectSchema(toolEntity: ToolEntity): JsonObjectSchema {
     return jsonObjectSchema.build()
 }
 
-fun toToolExecutor(functionCallExecutor: KClass<FunctionCallExecutor>) = ToolExecutor { toolExecutionRequest, _ ->
+fun toToolExecutor(functionCallExecutor: KClass<out FunctionCallExecutor>) = ToolExecutor { toolExecutionRequest, _ ->
     try {
         val functionCallExecutor = functionCallExecutor.createInstance()
         val arguments: String = toolExecutionRequest.arguments()

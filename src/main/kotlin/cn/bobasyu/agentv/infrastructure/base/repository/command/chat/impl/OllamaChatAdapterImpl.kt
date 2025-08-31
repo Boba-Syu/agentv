@@ -17,7 +17,7 @@ import dev.langchain4j.memory.chat.MessageWindowChatMemory
 import dev.langchain4j.service.AiServices
 import dev.langchain4j.service.tool.ToolExecutor
 
-class OllamaChatAdapterImpl: ChatAdapter {
+class OllamaChatAdapterImpl : ChatAdapter {
     override fun chat(
         agentAggregate: AgentAggregate,
         message: UserMessageVal
@@ -26,11 +26,14 @@ class OllamaChatAdapterImpl: ChatAdapter {
         val chatModelEntity = agentAggregate.chatModel
         val ollamaChatModel = toOllamaChatModel(chatModelEntity)
         // 记忆
-        val chatMemory = MessageWindowChatMemory.builder()
-            .id(chatModelEntity.id)
-            .maxMessages(chatModelEntity.config?.maxMessage ?: 10)
-            .chatMemoryStore(persistentChatMemoryStore)
-            .build()
+        val chatMemory = with(MessageWindowChatMemory.builder()) {
+            id(chatModelEntity.id)
+            maxMessages(chatModelEntity.config?.maxMessage ?: 10)
+            if (agentAggregate.agent.memorySaveFlag) {
+                chatMemoryStore(persistentChatMemoryStore)
+            }
+            build()
+        }
         // mcp
         val mcpToolProvider = McpToolProvider.builder()
             .mcpClients(toMcpClients(agentAggregate.mcpList.map { it.config }))
@@ -45,7 +48,7 @@ class OllamaChatAdapterImpl: ChatAdapter {
             .toolProvider(mcpToolProvider)
             .tools(toolSpecificationMap)
             .build()
-        val response = agentAssistant.chat(message.content)
+        val response = agentAssistant.chat(message.message)
         return AssistantMessageVal(response)
     }
 
@@ -57,7 +60,7 @@ class OllamaChatAdapterImpl: ChatAdapter {
         val agentAssistant = AiServices.builder(AgentAssistant::class.java)
             .chatModel(ollamaChatModel)
             .build()
-        val response = agentAssistant.chat(message.content)
+        val response = agentAssistant.chat(message.message)
         return AssistantMessageVal(response)
     }
 }

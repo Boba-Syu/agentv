@@ -12,6 +12,16 @@ enum class BangumiSubjectTypeEnum(
     OTHERS(6, "其他")
 }
 
+fun bangumiSubjectTypeEnum(code: Int): BangumiSubjectTypeEnum {
+    for (value in BangumiSubjectTypeEnum.entries) {
+        if (value.code == code) {
+            return value
+        }
+    }
+
+    throw IllegalArgumentException("Invalid code: $code")
+}
+
 data class BangumiImageVal(
     val large: String = "",
 
@@ -22,4 +32,15 @@ data class BangumiImageVal(
     val small: String = "",
 
     val grid: String = "",
+)
+
+data class BangumiTagVal(
+    val name: String,
+    val count: Long,
+    val totalCount: Long,
+)
+
+data class BangumiInfoboxVal(
+    val key: String,
+    val value: Any
 )

@@ -15,7 +15,7 @@ class LangChainAnswerGenerator(
         // 构建上下文字符串
         val contextText: String = context.joinToString("\n\n") { it.text }
         // 构造系统提示
-        val prompt: String = (systemPrompt ?: chatModelEntity.role?.content ?: "")
+        val prompt: String = (systemPrompt ?: chatModelEntity.role?.message ?: "")
             .replace("{context}", contextText)
         // LangChain4j的对话接口
         return chatModel.chat("$prompt\n\n用户问题: $question")

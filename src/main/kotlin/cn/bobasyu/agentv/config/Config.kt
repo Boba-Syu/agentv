@@ -25,3 +25,13 @@ data class BangumiConfig(
 data class OllamaConfig(
     val baseUrl: String
 )
+
+@ConfigName("embedding")
+data class EmbeddingConfig(
+    val host: String,
+    val port: Int,
+    val user: String,
+    val password: String,
+    val database: String,
+    val createTable: Boolean = true,
+)

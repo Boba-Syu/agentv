@@ -1,6 +1,6 @@
 package cn.bobasyu.agentv.domain.base.vals
 
 data class EmbeddingConfigVal(
-    val maxResult: Int?,
-    val minScore: Double?
+    val maxResults: Int? = null,
+    val minScore: Double? = null
 )

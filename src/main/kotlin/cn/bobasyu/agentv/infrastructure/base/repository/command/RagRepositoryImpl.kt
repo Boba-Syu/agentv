@@ -24,7 +24,7 @@ class RagRepositoryImpl : RagRepository {
         val answerGenerator = AnswerGeneratorFactory.answerGenerator(chatModelEntity)
         // 1. 检索上下文
         val context: List<TextSegmentVal> =
-            contextRetriever.retrieveContext(question, embeddingEntity.embeddingSetting.maxResult)
+            contextRetriever.retrieveContext(question, embeddingEntity.embeddingSetting.maxResults)
         // 2. 生成答案
         val answer = answerGenerator.generateAnswer(question, context)
         // 3. 计算耗时

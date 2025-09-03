@@ -19,7 +19,7 @@ interface VectorStoreAdaptor {
     /**
      * 初始化向量存储
      */
-    fun initStorage(dimensions: Int)
+    fun initStorage()
 
     /**
      * 存储向量和对应文本片段

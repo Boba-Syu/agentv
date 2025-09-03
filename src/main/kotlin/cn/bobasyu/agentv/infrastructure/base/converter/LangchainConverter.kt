@@ -30,7 +30,9 @@ import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema
 import dev.langchain4j.model.ollama.OllamaChatModel
 import dev.langchain4j.model.ollama.OllamaEmbeddingModel
+import dev.langchain4j.model.ollama.OllamaStreamingChatModel
 import dev.langchain4j.service.tool.ToolExecutor
+import java.time.Duration
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
@@ -41,6 +43,13 @@ fun toLangChain4jMessage(messageVal: MessageVal): ChatMessage = when (messageVal
 }
 
 fun toOllamaChatModel(chatModelEntity: ChatModelEntity): OllamaChatModel = OllamaChatModel.builder()
+    .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
+    .modelName(chatModelEntity.modelName)
+    .temperature(chatModelEntity.config?.temperature)
+    .timeout(Duration.ofMinutes(10))
+    .build()
+
+fun toOllamaStreamingChatModel(chatModelEntity: ChatModelEntity): OllamaStreamingChatModel = OllamaStreamingChatModel.builder()
     .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
     .modelName(chatModelEntity.modelName)
     .temperature(chatModelEntity.config?.temperature)
@@ -107,6 +116,7 @@ fun toToolExecutor(functionCallExecutor: KClass<out FunctionCallExecutor>) = Too
 fun toOllamaEmbeddingModel(embeddingEntity: EmbeddingEntity): OllamaEmbeddingModel {
     val embeddingModel: OllamaEmbeddingModel = OllamaEmbeddingModel.builder()
         .modelName(embeddingEntity.modelName)
+        .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
         .build()
     return embeddingModel
 }

@@ -22,7 +22,7 @@ val postgresqlVersion = "42.7.7"
 val guavaVersion = "33.4.8-jre"
 val langchain4jVersion = "1.2.0"
 val langchain4jMcpVersion = "1.2.0-beta8"
-val langchain4jPgVectorVersion = "0.36.2"
+val langchain4jPgVectorVersion = "1.0.0-beta3"
 val pgVersion = "42.7.3"
 val kotlinVersion = "2.2.10"
 

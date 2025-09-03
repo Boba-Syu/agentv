@@ -1,5 +1,6 @@
 package cn.bobasyu.agentv.infrastructure.base.extend
 
+import cn.bobasyu.agentv.domain.base.vals.EmbeddingConfigVal
 import cn.bobasyu.agentv.domain.base.vals.FilterOperator
 import cn.bobasyu.agentv.domain.base.vals.MetadataFilter
 import dev.langchain4j.data.embedding.Embedding
@@ -9,13 +10,14 @@ import dev.langchain4j.store.embedding.EmbeddingStore
 
 fun EmbeddingStore<TextSegment>.findRelevant(
     embedding: Embedding,
-    maxResults: Int?,
+    embeddingSetting: EmbeddingConfigVal,
     filter: List<MetadataFilter> = listOf()
 ): List<TextSegment> {
     // 检索相似段落
     val searchRequestBuilder = EmbeddingSearchRequest.builder()
         .queryEmbedding(embedding)
-        .maxResults(maxResults)
+        .minScore(embeddingSetting.minScore)
+        .maxResults(embeddingSetting.maxResults)
     if (filter.isNotEmpty()) {
         searchRequestBuilder.filter { metadata ->
             metadata as Map<*, *>

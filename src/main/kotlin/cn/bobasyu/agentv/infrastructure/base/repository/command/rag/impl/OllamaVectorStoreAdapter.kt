@@ -18,9 +18,7 @@ class OllamaVectorStoreAdapter(
 
     private val embeddingStore = toPgVectorEmbeddingStore(embeddingEntity)
 
-    override fun initStorage(dimensions: Int) {
-        TODO("Not yet implemented")
-    }
+    override fun initStorage() = Unit
 
     override fun storeVectors(vectors: List<List<Float>>, segments: List<TextSegmentVal>) {
         // 转换为 LangChain4j 的嵌入对象
@@ -37,7 +35,8 @@ class OllamaVectorStoreAdapter(
         filter: List<MetadataFilter>
     ): List<TextSegmentVal> {
         val queryEmbedding = Embedding.from(queryVector)
-        val results: List<TextSegment> = embeddingStore.findRelevant(queryEmbedding, maxResults, filter)
+        val results: List<TextSegment> =
+            embeddingStore.findRelevant(queryEmbedding, embeddingEntity.embeddingSetting, filter)
         return results.map { toTextSegmentVal(it) }
     }
 }

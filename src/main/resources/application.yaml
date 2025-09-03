@@ -13,3 +13,11 @@ bangumi:
 
 ollama:
   baseUrl: http://localhost:11434
+
+embedding:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: bobasyu
+  database: agentv
+  createTable: true

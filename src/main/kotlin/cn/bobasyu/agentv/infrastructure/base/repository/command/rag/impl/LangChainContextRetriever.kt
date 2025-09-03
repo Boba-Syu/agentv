@@ -12,7 +12,7 @@ import dev.langchain4j.data.embedding.Embedding
 import dev.langchain4j.data.segment.TextSegment
 
 class LangChainContextRetriever(
-    embeddingEntity: EmbeddingEntity
+    val embeddingEntity: EmbeddingEntity
 ) : ContextRetriever {
     val embeddingModel = toOllamaEmbeddingModel(embeddingEntity)
 
@@ -26,7 +26,7 @@ class LangChainContextRetriever(
         // 生成问题向量
         val questionEmbedding: Embedding = embeddingModel.embed(question).content()
         // 检索相似段落
-        val results: List<TextSegment> = embeddingStore.findRelevant(questionEmbedding, maxResults, filter)
+        val results: List<TextSegment> = embeddingStore.findRelevant(questionEmbedding, embeddingEntity.embeddingSetting, filter)
 
         return results.map { toTextSegmentVal(it) }
     }

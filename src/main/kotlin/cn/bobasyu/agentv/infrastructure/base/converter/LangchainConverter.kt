@@ -46,13 +46,13 @@ fun toOllamaChatModel(chatModelEntity: ChatModelEntity): OllamaChatModel = Ollam
     .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
     .modelName(chatModelEntity.modelName)
     .temperature(chatModelEntity.config?.temperature)
-    .timeout(Duration.ofMinutes(10))
     .build()
 
 fun toOllamaStreamingChatModel(chatModelEntity: ChatModelEntity): OllamaStreamingChatModel = OllamaStreamingChatModel.builder()
     .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
     .modelName(chatModelEntity.modelName)
     .temperature(chatModelEntity.config?.temperature)
+    .timeout(Duration.ofMinutes(10))
     .build()
 
 fun toMcpClients(mcpConfigVals: List<McpConfigVal>): List<DefaultMcpClient> = mcpConfigVals.map { toMcpClient(it) }

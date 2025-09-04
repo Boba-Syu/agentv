@@ -23,6 +23,7 @@ class LangChainContextRetriever(
         maxResults: Int?,
         filter: List<MetadataFilter>
     ): List<TextSegmentVal> {
+        // todo 对用户提问进行预处理
         // 生成问题向量
         val questionEmbedding: Embedding = embeddingModel.embed(question).content()
         // 检索相似段落

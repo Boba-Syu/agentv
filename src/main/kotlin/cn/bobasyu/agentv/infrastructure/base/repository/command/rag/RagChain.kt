@@ -6,6 +6,9 @@ import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.vals.*
 import cn.bobasyu.agentv.infrastructure.base.repository.command.chat.ChatAdapterHolder
 import dev.langchain4j.service.SystemMessage
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 
 object RagChainFactory {
     fun ragChain(
@@ -51,7 +54,7 @@ class PreprocessedQuestionChainNode : ChainNode<UserMessageVal, RagContext> {
         try {
             val chatAdapter = ChatAdapterHolder.chatAdapter(chatModelEntity.sourceType)
             val chatAssistant = chatAdapter.chatAssistant(PreprocessedQuestionAssistant::class, chatModelEntity)
-            val preprocessedQuestion = chatAssistant.preprocessQuestion(question =  req.message)
+            val preprocessedQuestion = chatAssistant.preprocessQuestion(question = req.message)
             return RagContext(
                 question = req,
                 preprocessedQuestion = preprocessedQuestion
@@ -75,10 +78,13 @@ class ContextRetrieverChainNode(
     val contextRetriever = ContextRetrieverFactory.contextRetriever(embeddingEntity)
 
     override fun process(req: RagContext): RagContext {
-        val textSegmentVals: List<TextSegmentVal> = req.preprocessedQuestion!!.question.map { question ->
-            contextRetriever.retrieveContext(question, embeddingEntity.embeddingSetting.maxResults)
-        }.flatMap { it }
-        req.textSegmentVals = textSegmentVals
+        runBlocking {
+            val deferredResults = req.preprocessedQuestion!!.question.map { question ->
+                async { contextRetriever.retrieveContext(question, embeddingEntity.embeddingSetting.maxResults) }
+            }
+            val textSegmentVals = deferredResults.awaitAll().flatten()
+            req.textSegmentVals = textSegmentVals
+        }
         return req
     }
 }
@@ -109,11 +115,13 @@ data class RagContext(
 )
 
 interface PreprocessedQuestionAssistant {
-    @SystemMessage("""
+    @SystemMessage(
+        """
                 你是一个智能总结器, 你需要使用更加规范化的语言, 总结用户问题, 如果用户有多个想问的问题, 请拆分城多个子问题, 按照一下json格式返回, 不要输出其他内容, 只返回json:
                 {
                   "question": ["用户问题1", "用户问题2"],
                 }
-            """)
+            """
+    )
     fun preprocessQuestion(question: String): PreprocessedQuestion
 }

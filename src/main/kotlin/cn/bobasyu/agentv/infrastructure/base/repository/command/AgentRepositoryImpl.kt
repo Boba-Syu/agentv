@@ -27,9 +27,15 @@ class AgentRepositoryImpl(
         return chatAdapter.chat(agentAggregate, message)
     }
 
-    override fun chat(chatModel: ChatModelEntity, message: UserMessageVal): AssistantMessageVal {
+    override fun chat(chatModel: ChatModelEntity, message: UserMessageVal): AssistantMessageVal =
+        chat(chatModel, listOf(message))
+
+    override fun chat(
+        chatModel: ChatModelEntity,
+        messages: List<MessageVal>
+    ): AssistantMessageVal {
         val chatAdapter = ChatAdapterHolder.chatAdapter(chatModel.sourceType)
-        return chatAdapter.chat(chatModel, message)
+        return chatAdapter.chat(chatModel, messages)
     }
 
     override fun saveModel(chatModel: ChatModelEntity) {

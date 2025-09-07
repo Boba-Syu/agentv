@@ -5,6 +5,7 @@ import cn.bobasyu.agentv.common.vals.Entity
 import cn.bobasyu.agentv.domain.base.vals.AssistantMessageVal
 import cn.bobasyu.agentv.domain.base.vals.ChatModelConfigVal
 import cn.bobasyu.agentv.domain.base.vals.ChatModelId
+import cn.bobasyu.agentv.domain.base.vals.MessageVal
 import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
 import cn.bobasyu.agentv.domain.base.vals.SystemMessageVal
 import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
@@ -39,4 +40,9 @@ data class ChatModelEntity(
      * 聊天
      */
     fun chat(message: UserMessageVal): AssistantMessageVal = agentRepository.chat(this, message)
+
+    /**
+     * 聊天
+     */
+    fun chat(messages: List<MessageVal>): AssistantMessageVal = agentRepository.chat(this, messages)
 }

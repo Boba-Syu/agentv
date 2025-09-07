@@ -9,6 +9,8 @@ import cn.bobasyu.agentv.domain.base.vals.EmbeddingConfigVal
 import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
 import cn.bobasyu.agentv.domain.base.vals.RagId
 import cn.bobasyu.agentv.domain.base.vals.TextSegmentVal
+import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
+import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.PreprocessedQuestionChainNode
 import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.OllamaTextEmbedder
 import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.OllamaVectorStoreAdapter
 import io.vertx.core.Vertx
@@ -85,6 +87,14 @@ class RagTest {
         answerQuestion = ragRepository.answerQuestion("小城日常 是什么时候播出的, 导演是谁", embeddingEntity, chatModelEntity)
         println(answerQuestion.response)
         println(answerQuestion.supportSegments)
+        testContext.completeNow()
+    }
+
+    @Test
+    fun langChainAnswerGeneratorTest2(testContext: VertxTestContext) {
+        val preprocessedQuestionChainNode = PreprocessedQuestionChainNode()
+        val resp = preprocessedQuestionChainNode.process(UserMessageVal("小城日常 是什么时候播出的, 导演是谁"))
+        println(resp)
         testContext.completeNow()
     }
 }

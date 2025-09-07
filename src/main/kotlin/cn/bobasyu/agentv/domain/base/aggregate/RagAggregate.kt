@@ -2,9 +2,11 @@ package cn.bobasyu.agentv.domain.base.aggregate
 
 import cn.bobasyu.agentv.application.repository.AgentRepositories.Command.ragRepository
 import cn.bobasyu.agentv.common.vals.Aggregate
+import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.vals.AnswerVal
 import cn.bobasyu.agentv.domain.base.vals.MetadataFilter
+import cn.bobasyu.agentv.domain.base.vals.RagId
 import cn.bobasyu.agentv.domain.base.vals.TextSegmentVal
 
 /**
@@ -18,8 +20,8 @@ data class RagAggregate(
     /**
      * 聊天模型
      */
-    val chatModelEntity: cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
-) : Aggregate<cn.bobasyu.agentv.domain.base.vals.RagId>(embeddingEntity.id) {
+    val chatModelEntity: ChatModelEntity
+) : Aggregate<RagId>(embeddingEntity.id) {
 
     /**
      *  rag 模型回答问题

@@ -2,7 +2,8 @@ package cn.bobasyu.agentv.infrastructure.base.repository.command.rag
 
 import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
-import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.OllamaTextEmbedder
+import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.OllamaTextEmbedderAbstract
+import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.OpenAiTextEmbedderAbstract
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
@@ -32,9 +33,8 @@ object TextEmbedderFactory {
         .expireAfterWrite(1, TimeUnit.HOURS)
         .build(object : CacheLoader<EmbeddingEntity, TextEmbedder>() {
             override fun load(embeddingEntity: EmbeddingEntity) = when (embeddingEntity.sourceType) {
-                ModelSourceType.OPENAI -> TODO()
-                ModelSourceType.VOLCENGINE -> TODO()
-                ModelSourceType.OLLAMA -> OllamaTextEmbedder(embeddingEntity)
+                ModelSourceType.OLLAMA -> OllamaTextEmbedderAbstract(embeddingEntity)
+                else -> OpenAiTextEmbedderAbstract(embeddingEntity)
             }
         })
 

@@ -47,6 +47,7 @@ dependencies {
 
     implementation("dev.langchain4j:langchain4j:${langchain4jVersion}")
     implementation("dev.langchain4j:langchain4j-ollama:${langchain4jVersion}")
+    implementation("dev.langchain4j:langchain4j-open-ai:${langchain4jVersion}")
     implementation("dev.langchain4j:langchain4j-mcp:${langchain4jMcpVersion}")
     implementation("dev.langchain4j:langchain4j-pgvector:${langchain4jPgVectorVersion}")
     implementation("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:${langchain4jKotlinVersion}")

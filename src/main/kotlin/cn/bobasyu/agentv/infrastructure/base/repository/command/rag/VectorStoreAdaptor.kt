@@ -4,7 +4,7 @@ import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.vals.MetadataFilter
 import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
 import cn.bobasyu.agentv.domain.base.vals.TextSegmentVal
-import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.OllamaVectorStoreAdapter
+import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.PgVectorStoreAdapter
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
@@ -52,7 +52,7 @@ object VectorStoreAdaptorFactory {
             override fun load(embeddingEntity: EmbeddingEntity) = when (embeddingEntity.sourceType) {
                 ModelSourceType.OPENAI -> TODO()
                 ModelSourceType.VOLCENGINE -> TODO()
-                ModelSourceType.OLLAMA -> OllamaVectorStoreAdapter(embeddingEntity)
+                ModelSourceType.OLLAMA -> PgVectorStoreAdapter(embeddingEntity)
             }
         })
 

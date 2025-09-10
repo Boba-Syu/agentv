@@ -9,6 +9,7 @@ import cn.bobasyu.agentv.domain.base.vals.MessageVal
 import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
 import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
 import cn.bobasyu.agentv.infrastructure.base.repository.command.chat.impl.OllamaChatAdapterImpl
+import cn.bobasyu.agentv.infrastructure.base.repository.command.chat.impl.OpenAIChatAdapterImpl
 import kotlin.reflect.KClass
 
 interface ChatAdapter {
@@ -43,9 +44,10 @@ object ChatAdapterHolder {
 
     val ollamaChatAdapter: OllamaChatAdapterImpl by lazy { OllamaChatAdapterImpl() }
 
+    val openAIChatAdapter: OpenAIChatAdapterImpl by lazy { OpenAIChatAdapterImpl() }
+
     fun chatAdapter(modelSourceType: ModelSourceType): ChatAdapter = when (modelSourceType) {
-        ModelSourceType.OPENAI -> TODO()
-        ModelSourceType.VOLCENGINE -> TODO()
+        ModelSourceType.OPENAI,ModelSourceType.VOLCENGINE -> openAIChatAdapter
         ModelSourceType.OLLAMA -> ollamaChatAdapter
     }
 }

@@ -26,6 +26,11 @@ data class OllamaConfig(
     val baseUrl: String
 )
 
+@ConfigName("openai")
+data class OpenaiConfig(
+    val baseUrl: String
+)
+
 @ConfigName("embedding")
 data class EmbeddingConfig(
     val host: String,
@@ -34,4 +39,14 @@ data class EmbeddingConfig(
     val password: String,
     val database: String,
     val createTable: Boolean = true,
+)
+
+@ConfigName("volcengine")
+data class VolcengineConfig(
+    val apiKey: String,
+)
+
+@ConfigName("siliconflow")
+data class ViliconflowConfig(
+    val apiKey: String,
 )

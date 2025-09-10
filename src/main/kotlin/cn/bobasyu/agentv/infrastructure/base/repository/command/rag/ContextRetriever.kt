@@ -4,7 +4,8 @@ import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.vals.MetadataFilter
 import cn.bobasyu.agentv.domain.base.vals.ModelSourceType
 import cn.bobasyu.agentv.domain.base.vals.TextSegmentVal
-import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.LangChainContextRetriever
+import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.OllamaContextRetriever
+import cn.bobasyu.agentv.infrastructure.base.repository.command.rag.impl.OpenAiContextRetriever
 
 
 /**
@@ -27,7 +28,7 @@ interface ContextRetriever {
 object ContextRetrieverFactory {
 
     fun contextRetriever(embeddingEntity: EmbeddingEntity): ContextRetriever = when (embeddingEntity.sourceType) {
-        ModelSourceType.OLLAMA -> LangChainContextRetriever(embeddingEntity)
-        else -> TODO()
+        ModelSourceType.OLLAMA -> OllamaContextRetriever(embeddingEntity)
+        else -> OpenAiContextRetriever(embeddingEntity)
     }
 }

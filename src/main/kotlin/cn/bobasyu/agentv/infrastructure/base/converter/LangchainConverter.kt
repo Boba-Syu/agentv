@@ -3,6 +3,7 @@ package cn.bobasyu.agentv.infrastructure.base.converter
 import cn.bobasyu.agentv.application.ApplicationContext
 import cn.bobasyu.agentv.common.utils.parseJsonToMap
 import cn.bobasyu.agentv.config.OllamaConfig
+import cn.bobasyu.agentv.config.OpenaiConfig
 import cn.bobasyu.agentv.domain.base.entity.ChatModelEntity
 import cn.bobasyu.agentv.domain.base.entity.EmbeddingEntity
 import cn.bobasyu.agentv.domain.base.entity.ToolEntity
@@ -31,6 +32,8 @@ import dev.langchain4j.model.chat.request.json.JsonObjectSchema
 import dev.langchain4j.model.ollama.OllamaChatModel
 import dev.langchain4j.model.ollama.OllamaEmbeddingModel
 import dev.langchain4j.model.ollama.OllamaStreamingChatModel
+import dev.langchain4j.model.openai.OpenAiChatModel
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel
 import dev.langchain4j.service.tool.ToolExecutor
 import java.time.Duration
 import kotlin.reflect.KClass
@@ -48,12 +51,19 @@ fun toOllamaChatModel(chatModelEntity: ChatModelEntity): OllamaChatModel = Ollam
     .temperature(chatModelEntity.config?.temperature)
     .build()
 
-fun toOllamaStreamingChatModel(chatModelEntity: ChatModelEntity): OllamaStreamingChatModel = OllamaStreamingChatModel.builder()
-    .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
+fun toOpenAiChatModel(chatModelEntity: ChatModelEntity): OpenAiChatModel = OpenAiChatModel.builder()
+    .baseUrl(ApplicationContext.instance.config[OpenaiConfig::class].baseUrl)
     .modelName(chatModelEntity.modelName)
     .temperature(chatModelEntity.config?.temperature)
-    .timeout(Duration.ofMinutes(10))
     .build()
+
+fun toOllamaStreamingChatModel(chatModelEntity: ChatModelEntity): OllamaStreamingChatModel =
+    OllamaStreamingChatModel.builder()
+        .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
+        .modelName(chatModelEntity.modelName)
+        .temperature(chatModelEntity.config?.temperature)
+        .timeout(Duration.ofMinutes(10))
+        .build()
 
 fun toMcpClients(mcpConfigVals: List<McpConfigVal>): List<DefaultMcpClient> = mcpConfigVals.map { toMcpClient(it) }
 
@@ -117,6 +127,14 @@ fun toOllamaEmbeddingModel(embeddingEntity: EmbeddingEntity): OllamaEmbeddingMod
     val embeddingModel: OllamaEmbeddingModel = OllamaEmbeddingModel.builder()
         .modelName(embeddingEntity.modelName)
         .baseUrl(ApplicationContext.instance.config[OllamaConfig::class].baseUrl)
+        .build()
+    return embeddingModel
+}
+
+fun toOpenAiEmbeddingModel(embeddingEntity: EmbeddingEntity): OpenAiEmbeddingModel {
+    val embeddingModel: OpenAiEmbeddingModel = OpenAiEmbeddingModel.builder()
+        .modelName(embeddingEntity.modelName)
+        .baseUrl(ApplicationContext.instance.config[OpenaiConfig::class].baseUrl)
         .build()
     return embeddingModel
 }

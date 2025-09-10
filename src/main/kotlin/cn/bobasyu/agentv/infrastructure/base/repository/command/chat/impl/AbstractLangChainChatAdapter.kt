@@ -11,6 +11,7 @@ import cn.bobasyu.agentv.domain.base.vals.UserMessageVal
 import cn.bobasyu.agentv.infrastructure.base.converter.toLangChain4jMessage
 import cn.bobasyu.agentv.infrastructure.base.converter.toMcpClients
 import cn.bobasyu.agentv.infrastructure.base.converter.toOllamaChatModel
+import cn.bobasyu.agentv.infrastructure.base.converter.toOpenAiChatModel
 import cn.bobasyu.agentv.infrastructure.base.converter.toToolExecutor
 import cn.bobasyu.agentv.infrastructure.base.converter.toToolSpecification
 import cn.bobasyu.agentv.infrastructure.base.repository.RepositoryContext.persistentChatMemoryStore
@@ -18,11 +19,20 @@ import cn.bobasyu.agentv.infrastructure.base.repository.command.chat.ChatAdapter
 import dev.langchain4j.agent.tool.ToolSpecification
 import dev.langchain4j.mcp.McpToolProvider
 import dev.langchain4j.memory.chat.MessageWindowChatMemory
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.service.AiServices
 import dev.langchain4j.service.tool.ToolExecutor
 import kotlin.reflect.KClass
 
-class OllamaChatAdapterImpl : ChatAdapter {
+class OllamaChatAdapterImpl : AbstractLangChainChatAdapter() {
+    override fun chatModel(chatModelEntity: ChatModelEntity): ChatModel = toOllamaChatModel(chatModelEntity)
+}
+
+class OpenAIChatAdapterImpl : AbstractLangChainChatAdapter() {
+    override fun chatModel(chatModelEntity: ChatModelEntity): ChatModel = toOpenAiChatModel(chatModelEntity)
+}
+
+abstract class AbstractLangChainChatAdapter : ChatAdapter {
     override fun chat(
         agentAggregate: AgentAggregate,
         message: UserMessageVal
@@ -36,8 +46,8 @@ class OllamaChatAdapterImpl : ChatAdapter {
         chatModel: ChatModelEntity,
         messages: List<MessageVal>
     ): AssistantMessageVal {
-        val ollamaChatModel = toOllamaChatModel(chatModel)
-        val chatResponse = ollamaChatModel.chat(messages.map { toLangChain4jMessage(it) })
+        val chatModel = chatModel(chatModel)
+        val chatResponse = chatModel.chat(messages.map { toLangChain4jMessage(it) })
         return AssistantMessageVal(chatResponse.aiMessage().text())
     }
 
@@ -47,26 +57,16 @@ class OllamaChatAdapterImpl : ChatAdapter {
     ): T {
         // 模型
         val chatModelEntity = agentAggregate.chatModel
-        val ollamaChatModel = toOllamaChatModel(chatModelEntity)
+        val chatModel = chatModel(chatModelEntity)
         // 记忆
-        val chatMemory = with(MessageWindowChatMemory.builder()) {
-            id(chatModelEntity.id)
-            maxMessages(chatModelEntity.config?.maxMessage ?: 10)
-            if (agentAggregate.agent.memorySaveFlag) {
-                chatMemoryStore(persistentChatMemoryStore)
-            }
-            build()
-        }
+        val chatMemory = chatMemory(chatModelEntity, agentAggregate)
         // mcp
-        val mcpToolProvider = McpToolProvider.builder()
-            .mcpClients(toMcpClients(agentAggregate.mcpList.map { it.config }))
-            .build()
+        val mcpToolProvider = mcpToolProvider(agentAggregate.mcpList)
         // tools 配置
-        val toolSpecificationMap: Map<ToolSpecification, ToolExecutor> = agentAggregate.tools
-            .associate { toToolSpecification(it) to toToolExecutor(it.functionCallExecutor) }
+        val toolSpecificationMap: Map<ToolSpecification, ToolExecutor> = getToolSpecificationMap(agentAggregate.tools)
 
         val assistant: T = AiServices.builder(clazz.java)
-            .chatModel(ollamaChatModel)
+            .chatModel(chatModel)
             .chatMemory(chatMemory)
             .toolProvider(mcpToolProvider)
             .tools(toolSpecificationMap)
@@ -80,19 +80,43 @@ class OllamaChatAdapterImpl : ChatAdapter {
         tools: MutableList<ToolEntity>,
         mcpList: MutableList<McpEntity>
     ): T {
-        val mcpToolProvider = McpToolProvider.builder()
-            .mcpClients(toMcpClients(mcpList.map { it.config }))
-            .build()
-        val toolSpecificationMap: Map<ToolSpecification, ToolExecutor> = tools
-            .associate { toToolSpecification(it) to toToolExecutor(it.functionCallExecutor) }
+        val chatModel = chatModel(chatModelEntity)
 
-        val ollamaChatModel = toOllamaChatModel(chatModelEntity)
+        val mcpToolProvider = mcpToolProvider(mcpList)
+        // tools 配置
+        val toolSpecificationMap: Map<ToolSpecification, ToolExecutor> = getToolSpecificationMap(tools)
 
         val assistant: T = AiServices.builder(clazz.java)
-            .chatModel(ollamaChatModel)
+            .chatModel(chatModel)
             .toolProvider(mcpToolProvider)
             .tools(toolSpecificationMap)
             .build()
         return assistant
     }
+
+
+    fun chatMemory(
+        chatModelEntity: ChatModelEntity,
+        agentAggregate: AgentAggregate
+    ): MessageWindowChatMemory? = with(MessageWindowChatMemory.builder()) {
+        id(chatModelEntity.id)
+        maxMessages(chatModelEntity.config?.maxMessage ?: 10)
+        if (agentAggregate.agent.memorySaveFlag) {
+            chatMemoryStore(persistentChatMemoryStore)
+        }
+        build()
+    }
+
+    fun mcpToolProvider(mcpList: List<McpEntity>): McpToolProvider? = McpToolProvider.builder()
+        .mcpClients(toMcpClients(mcpList.map { it.config }))
+        .build()
+
+
+    fun getToolSpecificationMap(tools: List<ToolEntity>): Map<ToolSpecification, ToolExecutor> = tools
+        .associate { toToolSpecification(it) to toToolExecutor(it.functionCallExecutor) }
+
+    /**
+     * 模型
+     */
+    abstract fun chatModel(chatModelEntity: ChatModelEntity): ChatModel
 }

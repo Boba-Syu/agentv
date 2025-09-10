@@ -12,7 +12,7 @@ import dev.langchain4j.data.embedding.Embedding
 import dev.langchain4j.data.segment.TextSegment
 
 
-class OllamaVectorStoreAdapter(
+class PgVectorStoreAdapter(
     var embeddingEntity: EmbeddingEntity,
 ) : VectorStoreAdaptor {
 
